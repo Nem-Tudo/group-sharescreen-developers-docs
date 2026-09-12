@@ -1,0 +1,48 @@
+/* O azul do ícone do GoLive. */
+:root {
+  --vp-c-brand-1: #0a7ce6;
+  --vp-c-brand-2: #0a8cff;
+  --vp-c-brand-3: #0a8cff;
+  --vp-c-brand-soft: rgba(10, 140, 255, 0.14);
+
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #0a8cff 20%, #38bdf8);
+  --vp-home-hero-image-background-image: linear-gradient(135deg, #0a8cff55 30%, #38bdf855);
+  --vp-home-hero-image-filter: blur(56px);
+}
+
+.dark {
+  --vp-c-brand-1: #4db0ff;
+  --vp-c-brand-2: #2b9fff;
+  --vp-c-brand-3: #0a8cff;
+}
+
+.VPHero .image-src {
+  border-radius: 28px;
+  max-width: 180px;
+}
+
+/* Rotas longas em código inline quebram a linha em vez de alargar a página no celular. */
+.vp-doc :not(pre) > code {
+  overflow-wrap: anywhere;
+}
+
+/* Método HTTP em destaque nas páginas de referência: <span class="http get">GET</span> */
+.http {
+  display: inline-block;
+  min-width: 3.6em;
+  margin-right: 0.4em;
+  padding: 0.05em 0.45em;
+  border-radius: 6px;
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.78em;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  vertical-align: 0.12em;
+}
+.http.get { background: #16a34a; }
+.http.post { background: #0a7ce6; }
+.http.put { background: #b45309; }
+.http.patch { background: #7c3aed; }
+.http.delete { background: #dc2626; }

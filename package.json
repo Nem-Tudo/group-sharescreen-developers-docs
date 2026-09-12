@@ -1,0 +1,17 @@
+{
+  "name": "sharescreen-developers-docs",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Documentação para desenvolvedores de bots do GoLive — developers-golive.nemtudo.me",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs",
+    "check:examples": "node scripts/check-examples.mjs"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4",
+    "ws": "^8.21.3"
+  }
+}

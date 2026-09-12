@@ -1,0 +1,17 @@
+{
+  "name": "golive-bot-completo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Bot de exemplo do GoLive: comandos, respostas, reações, paginação e DMs.",
+  "type": "module",
+  "engines": {
+    "node": ">=20.6"
+  },
+  "scripts": {
+    "start": "node --env-file=.env src/index.js",
+    "entrar": "node --env-file=.env scripts/entrar-no-grupo.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

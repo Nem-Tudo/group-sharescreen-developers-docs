@@ -1,0 +1,12 @@
+{
+  "name": "golive-bot-ping-pong",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env index.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
