@@ -149,6 +149,7 @@ Quase sempre é uma segunda cópia do bot rodando em algum lugar. Pare todas e d
 | Evento | Quando |
 |---|---|
 | `group-message` | Mensagem nova numa sala de texto que o bot vê (inclusive as do próprio bot). |
+| `group-message-updated` | O autor editou o texto de uma mensagem. |
 | `group-message-deleted` | Uma mensagem foi apagada. |
 | `group-message-reactions` | As reações de uma mensagem mudaram. |
 | `group-typing` | Alguém começou/parou de digitar. |

@@ -250,6 +250,55 @@ await step("reconecta sozinho quando a conexão cai", async () => {
 });
 
 await stopBot(bot);
+
+// ─── GoLiveClient, direto ───────────────────────────────────────────────────
+// O que nenhum comando do exemplo usa, conferido chamando o cliente aqui mesmo.
+console.log("examples/bot-completo — GoLiveClient");
+{
+  const { GoLiveClient } = await import("../examples/bot-completo/src/golive/client.js");
+  const client = new GoLiveClient({ token: BOT_TOKEN, apiUrl: API, gatewayUrl: env.GOLIVE_GATEWAY_URL });
+  const ready = once(client, "ready");
+  await client.login();
+  await ready;
+
+  await step("edita a própria mensagem e recebe messageUpdate", async () => {
+    const sent = await client.sendMessage("grp1", "chan1", "primeira versão");
+    const update = once(client, "messageUpdate");
+    const edited = await client.editMessage("grp1", "chan1", sent.id, "segunda versão");
+    assert.equal(edited.text, "segunda versão");
+    assert.ok(edited.editedAt >= sent.ts);
+    const [message] = await update;
+    assert.equal(message.id, sent.id);
+    assert.equal(message.text, "segunda versão");
+    assert.ok(message.editedAt instanceof Date);
+    assert.equal(message.createdAt.getTime(), sent.ts);
+  });
+
+  await step("não edita a mensagem de outra pessoa", async () => {
+    const { message } = await say("user-2", "minha mensagem");
+    await assert.rejects(client.editMessage("grp1", "chan1", message.id, "mexi"), /edit your own/);
+  });
+
+  await step("edita e apaga a própria DM", async () => {
+    const sent = await client.sendDirectMessage("user-2", "Pensando…");
+    const edited = waitFor("dm-edited", (m) => m.id === sent.id);
+    const message = await client.editDirectMessage("user-2", sent.id, "Pronto!");
+    assert.equal(message.text, "Pronto!");
+    assert.ok(message.editedAt >= sent.ts);
+    await edited;
+    const deleted = waitFor("dm-deleted", (mid) => mid === sent.id);
+    await client.deleteDirectMessage("user-2", sent.id);
+    await deleted;
+  });
+
+  await step("não apaga a DM de outra pessoa", async () => {
+    const { message } = await as("user-2", "POST", "/dm/bot-1", { text: "oi" });
+    await assert.rejects(client.deleteDirectMessage("user-2", message.id), /delete your own/);
+  });
+
+  client.destroy();
+}
+
 await mock.close();
 
 if (/Error|❌/.test(bot.output())) console.log("\nSaída do bot:\n" + bot.output());

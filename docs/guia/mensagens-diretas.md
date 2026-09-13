@@ -165,6 +165,33 @@ Os dois lados recebem `dm-reactions` com o **estado completo** das reações:
 
 No máximo **12 emojis diferentes** por mensagem.
 
+## Editando e apagando
+
+O bot pode editar e apagar as **próprias** mensagens. As da outra pessoa, não.
+
+| Rota | O que faz |
+|---|---|
+| <span class="http patch">PATCH</span> `/dm/:userId/messages/:messageId` | Troca o texto (`{ "text": "..." }`). Não notifica ninguém. |
+| <span class="http delete">DELETE</span> `/dm/:userId/messages/:messageId` | Apaga a mensagem para os dois lados. |
+
+```js
+// "Pensando..." e depois a resposta, na mesma mensagem.
+const message = await sendDM(userId, "Pensando…");
+await fetch(`${API}/dm/${userId}/messages/${message.id}`, {
+  method: "PATCH",
+  headers: { Authorization: TOKEN, "Content-Type": "application/json" },
+  body: JSON.stringify({ text: "Pronto! Aqui está o resultado." }),
+});
+```
+
+Os dois lados recebem `dm-edited` (com a mensagem como ficou) ou `dm-deleted`:
+
+```js
+{ type: "dm-deleted", messageId: "d1e2...", from: "f3a9...", to: "a41c..." }
+```
+
+A outra pessoa também pode editar ou apagar as mensagens dela, então os mesmos eventos chegam quando é ela quem muda algo. Se o bot guarda as mensagens recebidas, atualize ou descarte a cópia.
+
 ## Visto
 
 Quando alguém marca como lida uma conversa com o bot, o bot recebe:

@@ -14,6 +14,7 @@ Tudo o que trafega em `wss://apigolive.nemtudo.me/ws`. Cada mensagem é um objet
 | [`banned`](#banned) | Conexão | A conta ou o IP está banido (a conexão fecha em seguida). |
 | [`error`](#error) | Conexão | Uma mensagem enviada pelo bot era inválida. |
 | [`group-message`](#group-message) | Grupos | Mensagem nova numa sala de texto. |
+| [`group-message-updated`](#group-message-updated) | Grupos | O autor editou o texto de uma mensagem. |
 | [`group-message-deleted`](#group-message-deleted) | Grupos | Mensagem apagada. |
 | [`group-message-reactions`](#group-message-reactions) | Grupos | As reações de uma mensagem mudaram. |
 | [`group-typing`](#group-typing) | Grupos | Alguém começou/parou de digitar. |
@@ -28,6 +29,8 @@ Tudo o que trafega em `wss://apigolive.nemtudo.me/ws`. Cada mensagem é um objet
 | [`dm-typing`](#dm-typing) | DMs | Alguém começou/parou de digitar para o bot. |
 | [`dm-seen`](#dm-seen) | DMs | A outra conta leu a conversa. |
 | [`dm-reactions`](#dm-reactions) | DMs | As reações de uma DM mudaram. |
+| [`dm-edited`](#dm-edited) | DMs | O autor editou o texto de uma DM. |
+| [`dm-deleted`](#dm-deleted) | DMs | O autor apagou uma DM. |
 | [`dm-settings`](#dm-settings) | DMs | Outra conexão do bot mudou as confirmações de leitura. |
 | [`social-update`](#social-update) | Social | Amizade pedida/aceita/desfeita, bloqueio. |
 | [`presence-state`](#presence-state) | Presença | Resposta/atualização de um `presence-watch`. |
@@ -156,6 +159,32 @@ Mensagem nova numa sala de texto que o bot consegue ver — **inclusive as envia
 ```
 
 Veja [GroupMessage](./objetos#groupmessage) e [GroupUser](./objetos#groupuser).
+
+### `group-message-updated`
+
+O autor editou o texto de uma mensagem ([PATCH da mensagem](./rest#patch-groups-id-channels-cid-messages-mid)). Chega para todos que veem a sala, inclusive quando quem editou foi o próprio bot.
+
+```js
+{
+  type: "group-message-updated",
+  groupId: "k2x9d0a1b3",
+  channelId: "q7w3e5r9t1y2",
+  message: {                       // objeto GroupMessage, como está agora
+    id: "8c1f2d3e-6b7a-4c5d-9e8f-0a1b2c3d4e5f",
+    groupId: "k2x9d0a1b3",
+    channelId: "q7w3e5r9t1y2",
+    from: "a41c...",
+    fromName: "Maria",
+    text: "!ping (corrigido)",
+    kind: "text",
+    ts: 1757700000000,             // quando foi enviada: não muda
+    editedAt: 1757700042000
+  },
+  mentioned: {}                    // id → GroupUser, para cada <@id> do texto novo
+}
+```
+
+Não traz `author` nem o texto anterior. Para comparar antes e depois, guarde as mensagens quando chegam (como no exemplo de registro em [Moderação](/guia/moderacao)). Uma edição não gera `group-notify`, mesmo que o texto novo mencione o bot.
 
 ### `group-message-deleted`
 
@@ -324,6 +353,30 @@ Um `typing: true` sem o `false` depois expira sozinho em alguns segundos. Uma DM
 ```
 
 `from`/`to` são os da mensagem reagida. Traz o **estado completo** das reações, para os dois lados.
+
+### `dm-edited`
+
+```js
+{
+  type: "dm-edited",
+  message: {                        // objeto DirectMessage, como está agora
+    id: "d1e2...", from: "a41c...", to: "f3a9...",
+    text: "oi bot (corrigido)", kind: "text",
+    ts: 1757700000000,              // quando foi enviada: não muda
+    editedAt: 1757700042000
+  }
+}
+```
+
+Chega para os dois lados. Não traz o texto anterior e não gera notificação.
+
+### `dm-deleted`
+
+```js
+{ type: "dm-deleted", messageId: "d1e2...", from: "a41c...", to: "f3a9..." }
+```
+
+A mensagem foi apagada para os dois lados. `from`/`to` são os da mensagem apagada.
 
 ### `dm-settings`
 

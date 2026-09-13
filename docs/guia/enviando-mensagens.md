@@ -27,11 +27,12 @@ await sendMessage("k2x9d0a1b3", "q7w3e5r9t1y2", { text: "Olá, grupo! 👋" });
 | `text` | string | O texto. Até **2000** caracteres. Quebras de linha com `\n`. |
 | `images` | string[] | Até **3** imagens como *data URL* (`data:image/png;base64,...`). |
 | `url` | string | Um GIF do Giphy (`https://*.giphy.com/...`). |
+| `attachments` | string[] | Até **5** arquivos (vídeo, áudio, documentos), enviados antes em `POST /uploads`. Veja [Arquivos](#arquivos-video-audio-documentos). |
 | `replyTo` | objeto | A mensagem que está sendo respondida. Veja [Respondendo mensagens](./respondendo-mensagens). |
 | `mentions` | string[] | Para mencionar `@everyone` ou cargos (veja abaixo). |
 | `nonce` | string | Um identificador seu para a mensagem (8 a 64 caracteres `A-Z a-z 0-9 _ -`). Evita duplicar ao tentar de novo. |
 
-Uma mensagem precisa de pelo menos um entre `text`, `images` e `url`. Com imagens, o `text` vira a legenda.
+Uma mensagem precisa de pelo menos um entre `text`, `images`, `url` e `attachments`. Com imagens ou arquivos, o `text` vira a legenda.
 
 A resposta:
 
@@ -134,6 +135,38 @@ await sendMessage(groupId, channelId, {
 });
 ```
 
+## Arquivos (vídeo, áudio, documentos)
+
+Arquivos vão em dois passos. Primeiro o bot envia o arquivo para <span class="http post">POST</span> `/uploads` e recebe um `token`. Depois manda a mensagem com esse token em `attachments`. As imagens continuam indo em `images`.
+
+```js
+import { readFile } from "node:fs/promises";
+
+async function uploadFile(path, name, type, where = "groups") {
+  const bytes = await readFile(path);
+  const params = new URLSearchParams({ name, type, for: where });
+  const res = await fetch(`${API}/uploads?${params}`, {
+    method: "POST",
+    headers: { Authorization: TOKEN, "Content-Type": "application/octet-stream" },
+    body: bytes,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(`${res.status}: ${data.error}`);
+  return data.token; // data.attachment traz { url, name, size, type, kind }
+}
+
+const token = await uploadFile("./relatorio.pdf", "relatorio.pdf", "application/pdf");
+await sendMessage(groupId, channelId, { text: "O relatório do mês 📄", attachments: [token] });
+```
+
+- **Corpo:** os bytes do arquivo, crus (`application/octet-stream`), com `Content-Length`. Não use base64 nem JSON.
+- **Query:** `name` é o nome mostrado, `type` é o tipo MIME e `for` é `groups`, `dms` ou `chat`, conforme o destino.
+- **Tamanho:** até **50 MB** para uma conta comum. Consulte o limite do bot em <span class="http get">GET</span> `/uploads/limit`.
+- **Proibidos:** executáveis e instaladores (`.exe`, `.msi`, `.dll`, `.bat`, `.apk`...).
+- **Validade:** o token vale **7 dias** e só serve para quem enviou o arquivo.
+- **Permissão:** num grupo, arquivos exigem `sendImages`, a mesma permissão das imagens.
+- **Resultado:** a mensagem salva traz `message.attachments`, com `kind` igual a `"video"`, `"audio"` ou `"file"`.
+
 ## Evitando mensagens duplicadas: `nonce`
 
 Se a conexão cair no meio de um envio, você não sabe se a mensagem foi salva. Mande um `nonce` único: ao repetir o envio com **o mesmo nonce** (em até 10 minutos), a API devolve a mensagem já criada em vez de criar outra.
@@ -218,7 +251,9 @@ Não existe rota para uma mensagem isolada, mas se você sabe o `ts` dela, a pá
 
 | Status | `error` | O que fazer |
 |---|---|---|
-| `400` | `Empty message.` | Mande `text`, `images` ou `url`. |
+| `400` | `Empty message.` | Mande `text`, `images`, `url` ou `attachments`. |
+| `400` | `That file upload has expired. Attach it again.` | O token de `attachments` passou de 7 dias, é de outra conta ou está corrompido. Envie o arquivo de novo. |
+| `400` | `At most 5 files per message.` | Divida os arquivos em mais mensagens. |
 | `400` | `Invalid message.` | O texto tem caracteres de controle (só `\n` é permitido). |
 | `400` | `Your message contains a blocked word.` | O GoLive filtra algumas palavras. Troque o texto. |
 | `400` | `Invalid GIF.` | O `url` não é do Giphy. |

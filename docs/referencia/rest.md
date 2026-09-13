@@ -68,6 +68,7 @@ https://apigolive.nemtudo.me
 |---|---|---|---|---|
 | <span class="http get">GET</span> | [`/groups/:id/channels/:cid/messages`](#get-groups-id-channels-cid-messages) | Histórico (50 por página). | ver a sala | 240 |
 | <span class="http post">POST</span> | [`/groups/:id/channels/:cid/messages`](#post-groups-id-channels-cid-messages) | Envia mensagem. | `sendMessages` | 120 |
+| <span class="http patch">PATCH</span> | [`/groups/:id/channels/:cid/messages/:mid`](#patch-groups-id-channels-cid-messages-mid) | Edita o texto de uma mensagem. | só a própria, e `sendMessages` | 60 |
 | <span class="http delete">DELETE</span> | [`/groups/:id/channels/:cid/messages/:mid`](#delete-groups-id-channels-cid-messages-mid) | Apaga mensagem. | própria, ou `manageMessages` | 60 |
 | <span class="http post">POST</span> | [`/groups/:id/channels/:cid/messages/:mid/reactions`](#post-groups-id-channels-cid-messages-mid-reactions) | Coloca/tira reação. | `addReactions` / `react` | 120 |
 | <span class="http get">GET</span> | [`/groups/:id/channels/:cid/messages/:mid/reactions?emoji=`](#get-groups-id-channels-cid-messages-mid-reactions) | Quem reagiu com um emoji, paginado. | ver a sala | 120 |
@@ -116,6 +117,8 @@ https://apigolive.nemtudo.me
 | <span class="http post">POST</span> | `/dm/:userId/read` | Marca como lida. | 120 |
 | <span class="http post">POST</span> | `/dm/:userId/typing` | "Está digitando...". | 120 |
 | <span class="http post">POST</span> | `/dm/:userId/messages/:mid/reactions` | Reage (`{ emoji, on? }`). | 120 |
+| <span class="http patch">PATCH</span> | [`/dm/:userId/messages/:mid`](#patch-dm-userid-messages-mid) | Edita o texto de uma DM do bot. | 60 |
+| <span class="http delete">DELETE</span> | [`/dm/:userId/messages/:mid`](#delete-dm-userid-messages-mid) | Apaga uma DM do bot, para os dois lados. | 60 |
 | <span class="http get">GET</span> | `/dm/settings` | `{ readReceipts }` da conta. | 60 |
 | <span class="http put">PUT</span> | `/dm/settings` | Liga/desliga confirmações de leitura. | 30 |
 
@@ -321,6 +324,20 @@ Query: `before` (ms, opcional). Até 50 mensagens anteriores a `before`, da mais
 
 Pelo menos um de `text`, `images`, `url`. Resposta: `{ message, author, nonce? }`. Guia: [Enviando mensagens](/guia/enviando-mensagens).
 
+### PATCH /groups/:id/channels/:cid/messages/:mid
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `text` | string | O texto novo. Mesmas regras do envio: até 2000 caracteres, pessoas como `<@id>`. |
+| `mentions` | string[] | Opcional. `"@everyone"` e `"@role:<id>"`, como no envio. |
+
+Só o autor edita, nem com `manageMessages` dá para editar a mensagem de outra pessoa. Imagens, reações, `replyTo` e `ts` ficam como estavam. Quem a mensagem menciona é recalculado a partir do texto novo, mas a edição **não notifica ninguém**. Resposta: `{ message }`, com `editedAt` preenchido. Se o texto for igual ao atual, nada muda e `editedAt` não é marcado.
+
+- `400` com texto vazio numa mensagem sem imagens (para isso, apague a mensagem), ou numa mensagem de GIF.
+- `403` se a mensagem não for do bot, ou se ele não tiver mais `sendMessages` na sala.
+
+Todos que veem a sala recebem [`group-message-updated`](/referencia/eventos#group-message-updated).
+
 ### DELETE /groups/:id/channels/:cid/messages/:mid
 
 Sem corpo. Resposta: `{ ok: true }`. `403` se não for do bot e ele não tiver `manageMessages`.
@@ -449,3 +466,17 @@ Corpo `{}`. Resposta: `{ groupId }` (também se o bot já for membro).
 Resposta: `{ message }`. `404 User not found.` também quando há bloqueio entre as contas. Guia: [Mensagens diretas](/guia/mensagens-diretas).
 
 `GET /dm/:userId` responde `{ user, messages, seenTs }` — `seenTs` é até quando a outra conta leu, ou `null` se um dos dois desligou as confirmações de leitura.
+
+### PATCH /dm/:userId/messages/:mid
+
+Corpo: `{ text }`, com as mesmas regras do envio. Só o autor edita. Imagens, reações, `replyTo` e `ts` ficam como estavam, e a edição não notifica ninguém. Resposta: `{ message }`, com `editedAt` preenchido. Se o texto for igual ao atual, nada muda e `editedAt` não é marcado.
+
+- `400` com texto vazio numa mensagem sem imagens (para isso, apague a mensagem), ou numa mensagem de GIF.
+- `403` se a mensagem não for do bot.
+- `404` se a mensagem não for dessa conversa, ou se houver bloqueio entre as contas.
+
+Os dois lados recebem [`dm-edited`](/referencia/eventos#dm-edited).
+
+### DELETE /dm/:userId/messages/:mid
+
+Sem corpo. Apaga para os dois lados. Resposta: `{ ok: true }`. `403` se a mensagem não for do bot; `404` como no PATCH. Os dois lados recebem [`dm-deleted`](/referencia/eventos#dm-deleted).

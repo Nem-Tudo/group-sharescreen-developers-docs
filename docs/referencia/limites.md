@@ -12,7 +12,7 @@ Contados **por IP**, em janelas fixas. Vários bots no mesmo servidor dividem o 
 | `GET /groups/:id`, `GET /groups/:id/voice` | 240 / min |
 | `GET .../messages` (histórico) | 240 / min |
 | `POST .../messages` (enviar) | 120 / min |
-| `DELETE .../messages/:mid` | 60 / min |
+| `PATCH .../messages/:mid` (editar) · `DELETE .../messages/:mid` | 60 / min |
 | `POST .../reactions` · `GET .../reactions` | 120 / min |
 | `POST .../typing` | 120 / min |
 | `POST .../read` | 240 / min |
@@ -24,6 +24,7 @@ Contados **por IP**, em janelas fixas. Vários bots no mesmo servidor dividem o 
 | Criar convite · aceitar convite · entrar em grupo | 20 / min |
 | `POST /groups` (criar grupo) | 10 / min |
 | `POST /dm/:userId` | 60 / min |
+| `PATCH /dm/:userId/messages/:mid` · `DELETE /dm/:userId/messages/:mid` | 60 / min |
 | `GET /dm`, `GET /dm/:userId`, `POST /dm/:userId/read` | 120 / min |
 | `POST /dm/:userId/typing`, `POST /dm/:userId/messages/:mid/reactions` | 120 / min |
 | `GET /dm/settings` · `PUT /dm/settings` | 60 / min · 30 / min |

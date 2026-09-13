@@ -83,7 +83,8 @@ Na lista de membros (`GET /groups/:id/members`) ganha também:
   replyTo?: ReplyTo | null
   mentions?: string[]         // ids notificados, "@everyone", "@role:<id>"
   reactions?: Reaction[]      // ausente sem reações
-  ts: number
+  ts: number                  // quando foi enviada (não muda ao editar)
+  editedAt?: number           // última edição; ausente se nunca foi editada
 }
 ```
 
@@ -207,7 +208,8 @@ Todos `boolean`. O que cada um faz está em [Permissões](./permissoes).
   images?: string[]
   replyTo?: ReplyTo | null
   reactions?: Reaction[]      // ausente sem reações
-  ts: number
+  ts: number                  // quando foi enviada (não muda ao editar)
+  editedAt?: number           // última edição; ausente se nunca foi editada
   clientId?: string           // só no evento, se quem enviou mandou
 }
 ```

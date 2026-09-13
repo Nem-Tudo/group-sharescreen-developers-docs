@@ -26,6 +26,8 @@ export class GroupMessage {
     this.replyTo = message.replyTo ?? null;
     this.mentions = message.mentions ?? [];
     this.createdAt = new Date(message.ts);
+    /** Quando o texto foi editado pela última vez; null se nunca foi. */
+    this.editedAt = message.editedAt ? new Date(message.editedAt) : null;
     /** { id, name, username, avatarUrl, nameColor, flags, bot, guest } */
     this.author = author;
     /** Pessoas mencionadas, por id, com nome e avatar. */
@@ -62,6 +64,11 @@ export class GroupMessage {
 
   react(emoji) {
     return this.client.react(this.groupId, this.channelId, this.id, emoji);
+  }
+
+  /** Troca o texto — só funciona numa mensagem do próprio bot. */
+  edit(text) {
+    return this.client.editMessage(this.groupId, this.channelId, this.id, text);
   }
 
   delete() {

@@ -5,6 +5,7 @@
 //   ready            (user)                  conectado e registrado pela 1ª vez
 //   reconnected      (user)                  registrado de novo após uma queda
 //   messageCreate    (GroupMessage)          mensagem nova numa sala de texto
+//   messageUpdate    (GroupMessage)          o autor editou o texto (como ficou)
 //   messageDelete    ({ groupId, channelId, messageId })
 //   reactionAdd      ({ groupId, channelId, messageId, emoji, userId, reactions })
 //   reactionRemove   ({ groupId, channelId, messageId, emoji, userId, reactions })
@@ -73,6 +74,17 @@ export class GoLiveClient extends EventEmitter {
       case "group-message":
         this.#rememberReactions(payload.message.id, payload.message.reactions ?? []);
         this.emit("messageCreate", new GroupMessage(this, payload));
+        break;
+      case "group-message-updated":
+        // O evento não traz o autor; o nome é o que ele usava quando enviou.
+        this.emit(
+          "messageUpdate",
+          new GroupMessage(this, {
+            message: payload.message,
+            author: { id: payload.message.from, name: payload.message.fromName },
+            mentioned: payload.mentioned,
+          })
+        );
         break;
       case "group-message-deleted":
         this.#reactions.delete(payload.messageId);
@@ -162,6 +174,14 @@ export class GoLiveClient extends EventEmitter {
     return message;
   }
 
+  /** Troca o texto de uma mensagem do próprio bot. Devolve a mensagem como ficou. */
+  async editMessage(groupId, channelId, messageId, text) {
+    const { message } = await this.rest.patch(`/groups/${groupId}/channels/${channelId}/messages/${messageId}`, {
+      text,
+    });
+    return message;
+  }
+
   deleteMessage(groupId, channelId, messageId) {
     return this.rest.delete(`/groups/${groupId}/channels/${channelId}/messages/${messageId}`);
   }
@@ -201,6 +221,17 @@ export class GoLiveClient extends EventEmitter {
     const body = typeof content === "string" ? { text: content } : { ...content };
     const { message } = await this.rest.post(`/dm/${userId}`, body);
     return message;
+  }
+
+  /** Troca o texto de uma DM do próprio bot. Devolve a mensagem como ficou. */
+  async editDirectMessage(userId, messageId, text) {
+    const { message } = await this.rest.patch(`/dm/${userId}/messages/${messageId}`, { text });
+    return message;
+  }
+
+  /** Apaga uma DM do próprio bot, para os dois lados. */
+  deleteDirectMessage(userId, messageId) {
+    return this.rest.delete(`/dm/${userId}/messages/${messageId}`);
   }
 
   // ─── Grupos ────────────────────────────────────────────────────────────

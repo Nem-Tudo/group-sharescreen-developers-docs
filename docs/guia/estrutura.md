@@ -45,7 +45,8 @@ O `GoLiveClient` transforma os eventos crus em eventos prontos para usar:
 | Evento do cliente | Vem de | O que entrega |
 |---|---|---|
 | `ready` / `reconnected` | `registered` | a conta do bot |
-| `messageCreate` | `group-message` | um `GroupMessage` com `.reply()`, `.send()`, `.react()`, `.delete()` |
+| `messageCreate` | `group-message` | um `GroupMessage` com `.reply()`, `.send()`, `.react()`, `.edit()`, `.delete()` |
+| `messageUpdate` | `group-message-updated` | o `GroupMessage` como ficou (`editedAt` preenchido) |
 | `messageDelete` | `group-message-deleted` | `{ groupId, channelId, messageId }` |
 | `reactionAdd` / `reactionRemove` | `group-message-reactions` + diff | `{ messageId, emoji, userId, ... }` |
 | `reactionUpdate` | `group-message-reactions` | o estado completo |

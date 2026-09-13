@@ -100,6 +100,22 @@ export function createMockApi({ botToken }) {
       if (!body.text && !body.url && !body.images?.length) return [400, { error: "Empty message." }];
       return createMessage(me, body);
     }],
+    ["PATCH", /^\/groups\/grp1\/channels\/chan1\/messages\/([^/]+)$/, (me, [mid], body) => {
+      const m = messages.get(mid);
+      if (!m) return [404, { error: "Message not found." }];
+      if (m.from !== me) return [403, { error: "You can only edit your own messages." }];
+      if (m.kind === "gif") return [400, { error: "A GIF cannot be edited." }];
+      if (typeof body.text !== "string") return [400, { error: "Missing text." }];
+      const text = body.text.trim().slice(0, 2000);
+      if (!text && !m.images?.length) return [400, { error: "Empty message." }];
+      if (text === m.text) return { message: publicMessage(m) };
+      m.text = text;
+      m.editedAt = Date.now();
+      const message = publicMessage(m);
+      tellMembers({ type: "group-message-updated", groupId: group.id, channelId: channel.id, message, mentioned: {} });
+      events.emit("edited", message);
+      return { message };
+    }],
     ["DELETE", /^\/groups\/grp1\/channels\/chan1\/messages\/([^/]+)$/, (me, [mid]) => {
       const m = messages.get(mid);
       if (!m) return [404, { error: "Message not found." }];
@@ -190,6 +206,31 @@ export function createMockApi({ botToken }) {
       const { reactions = [] } = publicMessage(m);
       for (const id of [me, other]) send(id, { type: "dm-reactions", messageId: mid, from: m.from, to: m.to, reactions });
       return { reactions };
+    }],
+    ["PATCH", /^\/dm\/([^/]+)\/messages\/([^/]+)$/, (me, [other, mid], body) => {
+      const m = dms.get(mid);
+      if (!m || m.conversationId !== [me, other].sort().join(":")) return [404, { error: "Message not found." }];
+      if (m.from !== me) return [403, { error: "You can only edit your own messages." }];
+      if (m.kind === "gif") return [400, { error: "A GIF cannot be edited." }];
+      if (typeof body.text !== "string") return [400, { error: "Missing text." }];
+      const text = body.text.trim().slice(0, 2000);
+      if (!text && !m.images?.length) return [400, { error: "Empty message." }];
+      if (text === m.text) return { message: publicMessage(m) };
+      m.text = text;
+      m.editedAt = Date.now();
+      const message = publicMessage(m);
+      for (const id of [me, other]) send(id, { type: "dm-edited", message });
+      events.emit("dm-edited", message);
+      return { message };
+    }],
+    ["DELETE", /^\/dm\/([^/]+)\/messages\/([^/]+)$/, (me, [other, mid]) => {
+      const m = dms.get(mid);
+      if (!m || m.conversationId !== [me, other].sort().join(":")) return [404, { error: "Message not found." }];
+      if (m.from !== me) return [403, { error: "You can only delete your own messages." }];
+      dms.delete(mid);
+      for (const id of [me, other]) send(id, { type: "dm-deleted", messageId: mid, from: m.from, to: m.to });
+      events.emit("dm-deleted", mid);
+      return { ok: true };
     }],
     ["POST", /^\/dm\/([^/]+)$/, (me, [to], body) => {
       const message = { id: randomUUID(), conversationId: [me, to].sort().join(":"), from: me, to, text: body.text, kind: "text", ...(body.replyTo ? { replyTo: body.replyTo } : {}), ts: Date.now() };
