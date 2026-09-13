@@ -54,6 +54,8 @@ reactions: [
 
 Uma mensagem sem reações simplesmente não tem o campo `reactions`.
 
+Dentro de cada emoji, `users` está na ordem em que as pessoas reagiram (a mais antiga primeiro). Para os **nomes** de quem reagiu — com busca e paginação — use <span class="http get">GET</span> `/groups/:id/channels/:cid/messages/:mid/reactions?emoji=👍` (veja a [referência](/referencia/rest#get-groups-id-channels-cid-messages-mid-reactions)).
+
 ## Percebendo reações
 
 Quando as reações de uma mensagem mudam, todos que veem a sala recebem:

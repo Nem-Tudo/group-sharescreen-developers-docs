@@ -170,7 +170,7 @@ Uma sala, em `GET /groups/:id` → `channels`.
 ```ts
 {
   manage:  { administrator, manageGroup, manageChannels, manageRoles,
-             kickMembers, banMembers, manageMessages, createInvites }
+             kickMembers, banMembers, manageMessages, manageReactions, createInvites }
   general: { viewChannel }
   text:    { sendMessages, sendGifs, sendImages, mentionMembers,
              mentionEveryone, addReactions, react }

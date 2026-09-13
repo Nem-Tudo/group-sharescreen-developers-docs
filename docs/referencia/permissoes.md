@@ -15,6 +15,7 @@ Valem para o grupo todo; nenhuma sala sobrescreve.
 | `kickMembers` | Expulsar membros | Tirar alguém do grupo. | ❌ |
 | `banMembers` | Banir membros | Banir e desbanir; ver a lista de banidos. | ❌ |
 | `manageMessages` | Gerenciar mensagens | Apagar mensagens dos outros. | ❌ |
+| `manageReactions` | Gerenciar reações | Tirar a reação dos outros de uma mensagem. | ❌ |
 | `createInvites` | Criar convites | Criar convites e revogar os seus. | ❌ |
 
 ## Geral (`general`)

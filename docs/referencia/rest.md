@@ -70,6 +70,8 @@ https://apigolive.nemtudo.me
 | <span class="http post">POST</span> | [`/groups/:id/channels/:cid/messages`](#post-groups-id-channels-cid-messages) | Envia mensagem. | `sendMessages` | 120 |
 | <span class="http delete">DELETE</span> | [`/groups/:id/channels/:cid/messages/:mid`](#delete-groups-id-channels-cid-messages-mid) | Apaga mensagem. | própria, ou `manageMessages` | 60 |
 | <span class="http post">POST</span> | [`/groups/:id/channels/:cid/messages/:mid/reactions`](#post-groups-id-channels-cid-messages-mid-reactions) | Coloca/tira reação. | `addReactions` / `react` | 120 |
+| <span class="http get">GET</span> | [`/groups/:id/channels/:cid/messages/:mid/reactions?emoji=`](#get-groups-id-channels-cid-messages-mid-reactions) | Quem reagiu com um emoji, paginado. | ver a sala | 120 |
+| <span class="http delete">DELETE</span> | `/groups/:id/channels/:cid/messages/:mid/reactions?emoji=&userId=` | Tira a reação de alguém. Resposta: `{ reactions }`. | a própria, ou `manageReactions` | 120 |
 | <span class="http post">POST</span> | [`/groups/:id/channels/:cid/typing`](#post-groups-id-channels-cid-typing) | "Está digitando...". | `sendMessages` | 120 |
 | <span class="http post">POST</span> | `/groups/:id/channels/:cid/read` | Marca a sala como lida. | ver a sala | 240 |
 
@@ -331,6 +333,18 @@ Sem corpo. Resposta: `{ ok: true }`. `403` se não for do bot e ele não tiver `
 | `on` | `true` (padrão) coloca; `false` tira. |
 
 Resposta: `{ reactions: [ { emoji, users } ] }`. Máx. 20 emoji diferentes por mensagem.
+
+### GET /groups/:id/channels/:cid/messages/:mid/reactions
+
+| Parâmetro | Descrição |
+|---|---|
+| `emoji` | O emoji (obrigatório). |
+| `sort` | `recent` (padrão, mais recentes primeiro), `oldest` ou `name` (alfabética). |
+| `q` | Só quem tem isso no nome ou no @usuário. |
+| `after` | O `next` da página anterior. |
+| `limit` | 1–100, padrão 50. |
+
+Resposta: `{ people: [GroupUser], total, next }` — `total` é quantos batem com a busca; `next` é `null` na última página.
 
 ### POST /groups/:id/channels/:cid/typing
 

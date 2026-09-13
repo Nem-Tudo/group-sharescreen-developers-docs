@@ -13,7 +13,7 @@ Contados **por IP**, em janelas fixas. Vários bots no mesmo servidor dividem o 
 | `GET .../messages` (histórico) | 240 / min |
 | `POST .../messages` (enviar) | 120 / min |
 | `DELETE .../messages/:mid` | 60 / min |
-| `POST .../reactions` | 120 / min |
+| `POST .../reactions` · `GET .../reactions` | 120 / min |
 | `POST .../typing` | 120 / min |
 | `POST .../read` | 240 / min |
 | `GET /groups/:id/members` | 120 / min |

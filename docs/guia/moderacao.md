@@ -11,6 +11,7 @@ Todo comando de moderação precisa conferir se **quem pediu** tem a permissão.
 | Ação | Rota | Permissão do bot |
 |---|---|---|
 | Apagar mensagem | <span class="http delete">DELETE</span> `/groups/:id/channels/:cid/messages/:mid` | `manageMessages` (as dos outros) |
+| Tirar a reação de alguém | <span class="http delete">DELETE</span> `/groups/:id/channels/:cid/messages/:mid/reactions?emoji=&userId=` | `manageReactions` (as dos outros) |
 | Expulsar | <span class="http post">POST</span> `/groups/:id/members/:userId/kick` | `kickMembers` |
 | Banir | <span class="http post">POST</span> `/groups/:id/bans/:userId` | `banMembers` |
 | Desbanir | <span class="http delete">DELETE</span> `/groups/:id/bans/:userId` | `banMembers` |

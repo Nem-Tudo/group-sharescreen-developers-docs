@@ -11,7 +11,7 @@ import { WebSocketServer } from "ws";
 const STANDARD_EMOJI_RE = new RegExp("^\\p{RGI_Emoji}$", "v");
 
 const OFF = (keys) => Object.fromEntries(keys.map((k) => [k, false]));
-const MANAGE = ["administrator", "manageGroup", "manageChannels", "manageRoles", "kickMembers", "banMembers", "manageMessages", "createInvites"];
+const MANAGE = ["administrator", "manageGroup", "manageChannels", "manageRoles", "kickMembers", "banMembers", "manageMessages", "manageReactions", "createInvites"];
 
 export function createMockApi({ botToken }) {
   const events = new EventEmitter();
@@ -108,6 +108,38 @@ export function createMockApi({ botToken }) {
       tellMembers({ type: "group-message-deleted", groupId: group.id, channelId: channel.id, messageId: mid });
       events.emit("deleted", mid);
       return { ok: true };
+    }],
+    ["DELETE", /^\/groups\/grp1\/channels\/chan1\/messages\/([^/]+)\/reactions$/, (me, [mid], _body, params) => {
+      const emoji = params.get("emoji") ?? "";
+      if (!STANDARD_EMOJI_RE.test(emoji)) return [400, { error: "Invalid emoji." }];
+      const target = params.get("userId") || me;
+      const held = (memberRoles[me] ?? []).map((id) => group.roles.find((r) => r.id === id)).filter(Boolean);
+      const allowed = me === group.ownerId || held.some((r) => r.permissions.manage.manageReactions || r.permissions.manage.administrator);
+      if (target !== me && !allowed) return [403, { error: "You do not have permission to remove other people's reactions." }];
+      const m = messages.get(mid);
+      if (!m) return [404, { error: "Message not found." }];
+      m.reactions.get(emoji)?.delete(target);
+      const { reactions = [] } = publicMessage(m);
+      tellMembers({ type: "group-message-reactions", groupId: group.id, channelId: channel.id, messageId: mid, reactions });
+      return { reactions };
+    }],
+    ["GET", /^\/groups\/grp1\/channels\/chan1\/messages\/([^/]+)\/reactions$/, (_me, [mid], _body, params) => {
+      const emoji = params.get("emoji") ?? "";
+      if (!STANDARD_EMOJI_RE.test(emoji)) return [400, { error: "Invalid emoji." }];
+      const m = messages.get(mid);
+      if (!m) return [404, { error: "Message not found." }];
+      let ids = [...(m.reactions.get(emoji) ?? [])];
+      const sort = params.get("sort");
+      if (sort === "name") ids.sort((a, b) => groupUser(a).name.localeCompare(groupUser(b).name));
+      else if (sort !== "oldest") ids.reverse();
+      const q = (params.get("q") ?? "").toLowerCase();
+      if (q) ids = ids.filter((id) => groupUser(id).name.toLowerCase().includes(q));
+      const limit = Math.min(Math.max(Number(params.get("limit")) || 50, 1), 100);
+      const after = params.get("after");
+      const from = after ? ids.indexOf(after) + 1 : 0;
+      const page = ids.slice(from, from + limit);
+      const next = from + limit < ids.length ? page[page.length - 1] : null;
+      return { people: page.map(groupUser), total: ids.length, next };
     }],
     ["POST", /^\/groups\/grp1\/channels\/chan1\/messages\/([^/]+)\/reactions$/, (me, [mid], body) => {
       if (typeof body.emoji !== "string" || !STANDARD_EMOJI_RE.test(body.emoji)) return [400, { error: "Invalid emoji." }];
