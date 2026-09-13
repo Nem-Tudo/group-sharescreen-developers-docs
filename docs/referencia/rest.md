@@ -112,6 +112,10 @@ https://apigolive.nemtudo.me
 | <span class="http get">GET</span> | `/dm/:userId?before=` | Histórico com uma conta. | 120 |
 | <span class="http post">POST</span> | [`/dm/:userId`](#post-dm-userid) | Envia DM. | 60 |
 | <span class="http post">POST</span> | `/dm/:userId/read` | Marca como lida. | 120 |
+| <span class="http post">POST</span> | `/dm/:userId/typing` | "Está digitando...". | 120 |
+| <span class="http post">POST</span> | `/dm/:userId/messages/:mid/reactions` | Reage (`{ emoji, on? }`). | 120 |
+| <span class="http get">GET</span> | `/dm/settings` | `{ readReceipts }` da conta. | 60 |
+| <span class="http put">PUT</span> | `/dm/settings` | Liga/desliga confirmações de leitura. | 30 |
 
 ### Social
 
@@ -429,3 +433,5 @@ Corpo `{}`. Resposta: `{ groupId }` (também se o bot já for membro).
 | `clientId` | Um rótulo seu (1–64 `[A-Za-z0-9_-]`), devolvido no evento `dm`. |
 
 Resposta: `{ message }`. `404 User not found.` também quando há bloqueio entre as contas. Guia: [Mensagens diretas](/guia/mensagens-diretas).
+
+`GET /dm/:userId` responde `{ user, messages, seenTs }` — `seenTs` é até quando a outra conta leu, ou `null` se um dos dois desligou as confirmações de leitura.

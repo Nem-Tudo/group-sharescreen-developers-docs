@@ -39,6 +39,8 @@ export function createMockApi({ botToken }) {
   const members = new Set(accounts.keys());
   const channel = { id: "chan1", kind: "text", name: "geral" };
   const messages = new Map();
+  const dms = new Map();
+  const dmSettings = new Map();
   const sockets = new Map();
   const requests = [];
 
@@ -130,10 +132,38 @@ export function createMockApi({ botToken }) {
       events.emit("kicked", target);
       return { ok: true };
     }],
+    ["GET", /^\/dm\/settings$/, (me) => ({ readReceipts: dmSettings.get(me) ?? true })],
+    ["PUT", /^\/dm\/settings$/, (me, _m, body) => {
+      if (typeof body.readReceipts !== "boolean") return [400, { error: "readReceipts must be true or false." }];
+      dmSettings.set(me, body.readReceipts);
+      send(me, { type: "dm-settings", readReceipts: body.readReceipts });
+      return { readReceipts: body.readReceipts };
+    }],
+    ["POST", /^\/dm\/([^/]+)\/typing$/, (me, [to], body) => {
+      if (to !== me) send(to, { type: "dm-typing", from: me, typing: body.typing !== false });
+      return { ok: true };
+    }],
+    ["POST", /^\/dm\/([^/]+)\/read$/, (me, [other]) => {
+      send(me, { type: "dm-read", otherId: other });
+      if ((dmSettings.get(me) ?? true) && (dmSettings.get(other) ?? true)) send(other, { type: "dm-seen", by: me, ts: Date.now() });
+      return { ok: true };
+    }],
+    ["POST", /^\/dm\/([^/]+)\/messages\/([^/]+)\/reactions$/, (me, [other, mid], body) => {
+      if (typeof body.emoji !== "string" || !STANDARD_EMOJI_RE.test(body.emoji)) return [400, { error: "Invalid emoji." }];
+      const m = dms.get(mid);
+      if (!m || m.conversationId !== [me, other].sort().join(":")) return [404, { error: "Message not found." }];
+      const users = m.reactions.get(body.emoji) ?? new Set();
+      if (body.on === false) users.delete(me); else users.add(me);
+      m.reactions.set(body.emoji, users);
+      const { reactions = [] } = publicMessage(m);
+      for (const id of [me, other]) send(id, { type: "dm-reactions", messageId: mid, from: m.from, to: m.to, reactions });
+      return { reactions };
+    }],
     ["POST", /^\/dm\/([^/]+)$/, (me, [to], body) => {
       const message = { id: randomUUID(), conversationId: [me, to].sort().join(":"), from: me, to, text: body.text, kind: "text", ...(body.replyTo ? { replyTo: body.replyTo } : {}), ts: Date.now() };
       const a = accounts.get(me);
       const fromUser = { id: a.id, username: a.username, displayName: a.displayName, flags: [], bot: a.bot, avatarUrl: null, nameColor: null };
+      dms.set(message.id, { ...message, reactions: new Map() });
       for (const id of [me, to]) send(id, { type: "dm", message, fromUser });
       events.emit("dm", message);
       return { message };

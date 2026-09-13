@@ -25,6 +25,10 @@ Tudo o que trafega em `wss://apigolive.nemtudo.me/ws`. Cada mensagem é um objet
 | [`group-order`](#group-order) | Grupos | A ordem da lista de grupos do bot mudou. |
 | [`dm`](#dm) | DMs | DM enviada ou recebida. |
 | [`dm-read`](#dm-read) | DMs | Outra conexão do bot marcou uma conversa como lida. |
+| [`dm-typing`](#dm-typing) | DMs | Alguém começou/parou de digitar para o bot. |
+| [`dm-seen`](#dm-seen) | DMs | A outra conta leu a conversa. |
+| [`dm-reactions`](#dm-reactions) | DMs | As reações de uma DM mudaram. |
+| [`dm-settings`](#dm-settings) | DMs | Outra conexão do bot mudou as confirmações de leitura. |
 | [`social-update`](#social-update) | Social | Amizade pedida/aceita/desfeita, bloqueio. |
 | [`presence-state`](#presence-state) | Presença | Resposta/atualização de um `presence-watch`. |
 | [`announcement`](#eventos-que-o-bot-pode-ignorar) | Site | Aviso do site para todos. Ignore. |
@@ -296,6 +300,36 @@ Chega para **os dois lados** da conversa — inclusive quando é o bot quem envi
 ```
 
 Outra conexão do bot marcou a conversa com `otherId` como lida.
+
+### `dm-typing`
+
+```js
+{ type: "dm-typing", from: "a41c...", typing: true }
+```
+
+Um `typing: true` sem o `false` depois expira sozinho em alguns segundos. Uma DM de `from` também apaga.
+
+### `dm-seen`
+
+```js
+{ type: "dm-seen", by: "a41c...", ts: 1757700000000 }
+```
+
+`by` leu a conversa com o bot até `ts`. Só chega quando os dois lados compartilham confirmações de leitura.
+
+### `dm-reactions`
+
+```js
+{ type: "dm-reactions", messageId: "d1e2...", from: "a41c...", to: "f3a9...", reactions: [ { emoji: "👍", users: ["a41c..."] } ] }
+```
+
+`from`/`to` são os da mensagem reagida. Traz o **estado completo** das reações, para os dois lados.
+
+### `dm-settings`
+
+```js
+{ type: "dm-settings", readReceipts: false }
+```
 
 ---
 

@@ -25,6 +25,8 @@ Contados **por IP**, em janelas fixas. Vários bots no mesmo servidor dividem o 
 | `POST /groups` (criar grupo) | 10 / min |
 | `POST /dm/:userId` | 60 / min |
 | `GET /dm`, `GET /dm/:userId`, `POST /dm/:userId/read` | 120 / min |
+| `POST /dm/:userId/typing`, `POST /dm/:userId/messages/:mid/reactions` | 120 / min |
+| `GET /dm/settings` · `PUT /dm/settings` | 60 / min · 30 / min |
 | `PATCH /account/profile` | 30 / min |
 | `GET /users/:id` | 60 / min |
 | Rotas `/social/*` (escrita) | 30 / min |

@@ -206,6 +206,7 @@ Todos `boolean`. O que cada um faz está em [Permissões](./permissoes).
   url?: string
   images?: string[]
   replyTo?: ReplyTo | null
+  reactions?: Reaction[]      // ausente sem reações
   ts: number
   clientId?: string           // só no evento, se quem enviou mandou
 }

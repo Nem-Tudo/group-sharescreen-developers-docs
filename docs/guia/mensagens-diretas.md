@@ -113,13 +113,67 @@ if (command === "lembrete") {
 |---|---|
 | <span class="http get">GET</span> `/dm` | Todas as conversas do bot, com a última mensagem e quantas não lidas. |
 | <span class="http get">GET</span> `/dm/:userId?before=<ts>` | O histórico com uma pessoa, 50 por vez (`before` volta no tempo). |
-| <span class="http post">POST</span> `/dm/:userId/read` | Marca a conversa como lida. |
+| <span class="http post">POST</span> `/dm/:userId/read` | Marca a conversa como lida (e avisa "visto" ao outro lado, se os dois compartilham). |
 
 ```js
 const { conversations, unread } = await fetch(`${API}/dm`, { headers: { Authorization: TOKEN } })
   .then((r) => r.json());
 // conversations: [{ user: { id, username, displayName, ... }, lastMessage: {...}, unread: 2 }]
 ```
+
+O `GET /dm/:userId` também devolve `seenTs`: até quando a outra pessoa leu a conversa, ou `null` se isso não é compartilhado (veja [Visto](#visto)).
+
+## Digitando
+
+<span class="http post">POST</span> `/dm/:userId/typing` com `{ "typing": true }` mostra "digitando…" para a pessoa; `{ "typing": false }` apaga. Um `true` sem o `false` depois expira sozinho em alguns segundos, então repita a cada ~5 s enquanto o bot "pensa".
+
+```js
+async function typingDM(userId, typing = true) {
+  await fetch(`${API}/dm/${userId}/typing`, {
+    method: "POST",
+    headers: { Authorization: TOKEN, "Content-Type": "application/json" },
+    body: JSON.stringify({ typing }),
+  });
+}
+```
+
+Quando alguém digita para o bot, chega `dm-typing`:
+
+```js
+{ type: "dm-typing", from: "a41c...", typing: true }
+```
+
+## Reações
+
+Qualquer um dos dois pode reagir a qualquer mensagem da conversa — com emoji padrão, como nos grupos.
+
+<span class="http post">POST</span> `/dm/:userId/messages/:messageId/reactions` com `{ "emoji": "👍" }` (ou `"on": false` para tirar).
+
+```js
+await fetch(`${API}/dm/${event.fromUser.id}/messages/${event.message.id}/reactions`, {
+  method: "POST",
+  headers: { Authorization: TOKEN, "Content-Type": "application/json" },
+  body: JSON.stringify({ emoji: "👀" }),
+});
+```
+
+Os dois lados recebem `dm-reactions` com o **estado completo** das reações:
+
+```js
+{ type: "dm-reactions", messageId: "d1e2...", from: "a41c...", to: "f3a9...", reactions: [ { emoji: "👀", users: ["f3a9..."] } ] }
+```
+
+No máximo **12 emojis diferentes** por mensagem.
+
+## Visto
+
+Quando alguém marca como lida uma conversa com o bot, o bot recebe:
+
+```js
+{ type: "dm-seen", by: "a41c...", ts: 1757700000000 }
+```
+
+Tudo que o bot enviou até `ts` foi lido. Só chega se **os dois lados** compartilham confirmações de leitura — é mútuo, como no WhatsApp. A conta liga e desliga em <span class="http get">GET</span>/<span class="http put">PUT</span> `/dm/settings` (`{ "readReceipts": true }`); desligado, ela também deixa de ver quando leem as dela.
 
 ## Erros
 
@@ -128,6 +182,8 @@ const { conversations, unread } = await fetch(`${API}/dm`, { headers: { Authoriz
 | `404 User not found.` | A conta não existe **ou** um dos dois bloqueou o outro (a API dá a mesma resposta de propósito). |
 | `400 You cannot message yourself.` | O bot tentou mandar DM para si mesmo. |
 | `400 Empty message.` | Faltou `text`, `images` ou `url`. |
+| `400 Invalid emoji.` | A reação não é exatamente um emoji padrão. |
+| `404 Message not found.` | A mensagem não existe, não é dessa conversa, ou há bloqueio. |
 | `429` | Limite de **60 DMs por minuto**. |
 
 ::: danger Não faça spam de DM
