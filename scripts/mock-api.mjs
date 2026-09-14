@@ -4,7 +4,9 @@
 // mesmas validações (emoji padrão, corpo JSON vazio, dono não pode ser expulso)
 // — e as regras que só valem para bots: não entrar em grupo sozinho, ser
 // adicionado por quem gerencia o grupo, só puxar DM com quem divide um grupo
-// ou já escreveu antes, e ser desconectado (código 4004) quando o token muda.
+// ou já escreveu antes, ser desconectado (código 4004) quando o token muda, e
+// ser suspenso pela administração (403 bot_suspended no HTTP, banned + 4003 no
+// WebSocket).
 
 import http from "node:http";
 import { EventEmitter } from "node:events";
@@ -49,6 +51,8 @@ export function createMockApi({ botToken }) {
   const dmSettings = new Map();
   const sockets = new Map();
   const requests = [];
+  // A suspensão pela administração do GoLive — veja suspend() abaixo.
+  let suspended = false;
 
   function send(userId, payload) {
     for (const ws of sockets.get(userId) ?? []) ws.send(JSON.stringify(payload));
@@ -292,6 +296,10 @@ export function createMockApi({ botToken }) {
       const me = auth === botToken ? "bot-1" : auth.startsWith("Bearer ") ? auth.slice(7) : null;
       requests.push({ method: req.method, path: url.pathname, me, body });
       if (!me) return reply(401, { error: "unauthorized" });
+      // Como o hook do servidor real: toda rota, antes de qualquer outra coisa.
+      if (suspended && me === "bot-1") {
+        return reply(403, { error: "This bot has been suspended by GoLive's administration.", reason: "bot_suspended" });
+      }
       for (const [method, pattern, handler] of routes) {
         const match = req.method === method && pattern.exec(url.pathname);
         if (!match) continue;
@@ -310,6 +318,10 @@ export function createMockApi({ botToken }) {
       if (msg.type !== "register") return;
       // Token inválido cai no caminho de convidado sem nome, como no servidor real.
       if (msg.token !== botToken) return ws.send(JSON.stringify({ type: "register-error", message: "Invalid name." }));
+      if (suspended) {
+        ws.send(JSON.stringify({ type: "banned", subject: "account", reason: "Suspended" }));
+        return ws.close(4003, "banned");
+      }
       if (!sockets.has("bot-1")) sockets.set("bot-1", new Set());
       sockets.get("bot-1").add(ws);
       ws.on("close", () => sockets.get("bot-1")?.delete(ws));
@@ -330,6 +342,16 @@ export function createMockApi({ botToken }) {
     removeBotFromGroup: () => members.delete("bot-1"),
     /** O que acontece quando o dono troca o token no portal: o WebSocket fecha com 4004. */
     revokeToken: () => { for (const ws of sockets.get("bot-1") ?? []) ws.close(4004, "token-reset"); },
+    /** A administração suspende o bot: banned + 4003 no WebSocket, 403 bot_suspended no HTTP. */
+    suspend: () => {
+      suspended = true;
+      for (const ws of sockets.get("bot-1") ?? []) {
+        ws.send(JSON.stringify({ type: "banned", subject: "account", reason: "Suspended" }));
+        ws.close(4003, "banned");
+      }
+    },
+    /** A suspensão acaba: o bot volta como estava. */
+    unsuspend: () => { suspended = false; },
     close: () => new Promise((resolve) => { for (const ws of wss.clients) ws.terminate(); wss.close(); server.close(() => resolve()); }),
     announce: (payload) => tellMembers(payload),
   };

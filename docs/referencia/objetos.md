@@ -81,7 +81,8 @@ Na lista de membros (`GET /groups/:id/members`) ganha também:
   url?: string                // o GIF
   images?: string[]           // URLs na CDN do GoLive
   replyTo?: ReplyTo | null
-  mentions?: string[]         // ids notificados, "@everyone", "@role:<id>"
+  mentions?: string[]         // ids notificados, "@everyone", "@role:<id>", "@online", "@offline", "@expr:<expressão>"
+  pingedMe?: boolean          // só no GET de mensagens, com @online/@offline/@expr: — se alcançou quem lê
   reactions?: Reaction[]      // ausente sem reações
   ts: number                  // quando foi enviada (não muda ao editar)
   editedAt?: number           // última edição; ausente se nunca foi editada

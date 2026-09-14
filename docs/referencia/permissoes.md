@@ -36,7 +36,7 @@ Só para salas de texto; a sala pode sobrescrever.
 | `sendGifs` | Enviar GIFs. | ✅ |
 | `sendImages` | Enviar imagens. | ✅ |
 | `mentionMembers` | Mencionar pessoas com notificação. Sem isso a menção aparece, mas não notifica. | ✅ |
-| `mentionEveryone` | Usar `@everyone` e mencionar qualquer cargo. | ❌ |
+| `mentionEveryone` | Usar `@everyone`, `@online`, `@offline`, `!` nas combinações, e mencionar qualquer cargo. | ❌ |
 | `addReactions` | Colocar um emoji **novo** numa mensagem. | ✅ |
 | `react` | Entrar numa reação que já existe. | ✅ |
 

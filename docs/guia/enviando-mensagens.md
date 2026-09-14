@@ -29,7 +29,7 @@ await sendMessage("k2x9d0a1b3", "q7w3e5r9t1y2", { text: "Olá, grupo! 👋" });
 | `url` | string | Um GIF do Giphy (`https://*.giphy.com/...`). |
 | `attachments` | string[] | Até **5** arquivos (vídeo, áudio, documentos), enviados antes em `POST /uploads`. Veja [Arquivos](#arquivos-video-audio-documentos). |
 | `replyTo` | objeto | A mensagem que está sendo respondida. Veja [Respondendo mensagens](./respondendo-mensagens). |
-| `mentions` | string[] | Para mencionar `@everyone` ou cargos (veja abaixo). |
+| `mentions` | string[] | Para mencionar `@everyone`, `@online`, `@offline`, cargos ou uma combinação deles (veja abaixo). |
 | `nonce` | string | Um identificador seu para a mensagem (8 a 64 caracteres `A-Z a-z 0-9 _ -`). Evita duplicar ao tentar de novo. |
 
 Uma mensagem precisa de pelo menos um entre `text`, `images`, `url` e `attachments`. Com imagens ou arquivos, o `text` vira a legenda.
@@ -104,6 +104,41 @@ await sendMessage(groupId, channelId, {
 ::: warning Menção é notificação
 `@everyone` manda notificação para o celular de todo mundo do grupo. Use com muita parcimônia — é o caminho mais rápido para o bot ser expulso.
 :::
+
+### `@online`, `@offline` e combinações
+
+`@online` avisa quem está conectado **no momento do envio**; `@offline`, quem não está. E dá para combinar cargos e status com `&` (E), `|` (OU) e `!` (NÃO), agrupando com chaves:
+
+| No texto | Quem é avisado |
+|---|---|
+| `@online` | quem está online |
+| `{@Moderação&@online}` | quem tem Moderação **e** está online |
+| `{@Moderação&@offline}` | quem tem Moderação **e** está offline |
+| `{@Moderação&@VIP}` | quem tem os dois cargos |
+| `{@Moderação&{@VIP\|@online}}` | quem tem Moderação **e** (VIP **ou** está online) |
+| `{@VIP&!@Moderação}` | quem tem VIP mas **não** Moderação |
+
+`&` vale antes de `\|`, como na maioria das linguagens — na dúvida, use chaves.
+
+Como `@everyone`, isso vai no campo `mentions`, sempre **por id**: `"@online"`, `"@offline"`, ou `"@expr:"` seguido da expressão com `role:<id>` no lugar de cada cargo. O texto deve conter a mesma expressão com os nomes, para ela ser desenhada como menção:
+
+```js
+await sendMessage(groupId, channelId, {
+  text: "{@Moderação&@online} alguém pode ver o canal de denúncias?",
+  mentions: [`@expr:role:${modRoleId}&online`],
+});
+```
+
+Uma expressão com um cargo só, ou só um status, não é `@expr:`: use `"@role:<id>"`, `"@online"` ou `"@offline"`.
+
+A permissão segue uma regra: **a menção não pode alcançar mais gente do que você poderia mencionar sozinho**.
+
+- `@everyone`, `@online`, `@offline` e qualquer `!` exigem `mentionEveryone`.
+- Um cargo exige que ele seja mencionável (ou `mentionEveryone`).
+- Com `&`, basta **um** dos lados ser permitido — `{@Moderação&@online}` só estreita a menção de Moderação.
+- Com `|`, **todos** os lados precisam ser permitidos.
+
+Uma entrada que não passa na regra, ou que cita um cargo que não existe, é ignorada — a mensagem vai do mesmo jeito, sem notificar por ela. Até 16 termos e 5 dessas menções por mensagem.
 
 ## Imagens
 

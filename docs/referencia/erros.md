@@ -14,7 +14,7 @@ As mensagens de `error` são em inglês e podem mudar — decida pelo **status**
 |---|---|---|
 | `400` | Bad Request | O corpo está errado: campo faltando, valor inválido, emoji que não é emoji, palavra bloqueada. Não adianta repetir igual. |
 | `401` | Unauthorized | Token ausente, inválido ou revogado — ou uma rota que exige sessão de pessoa. |
-| `403` | Forbidden | O bot não tem a permissão, ou tentou agir sobre alguém de cargo igual/acima. |
+| `403` | Forbidden | O bot não tem a permissão, ou tentou agir sobre alguém de cargo igual/acima. Com `reason: "bot_suspended"`, o bot foi suspenso pela administração do GoLive — veja abaixo. |
 | `404` | Not Found | Não existe **ou o bot não tem acesso**: grupo em que ele não está, sala que ele não vê, conta que bloqueou. A API não diferencia de propósito. |
 | `409` | Conflict | Conflito de estado: nome em uso, limite de bots atingido, pedido de amizade repetido. |
 | `410` | Gone | Convite expirado, revogado ou esgotado. |
@@ -70,6 +70,28 @@ try {
 
 A versão completa, com repetição em falhas de rede, é o [`rest.js` do bot completo](/exemplos/bot-completo#o-cliente-http).
 
+## Bot suspenso
+
+A administração do GoLive pode suspender um bot — por tempo determinado ou até segunda ordem. Enquanto isso:
+
+- **toda** requisição HTTP com o token dele responde `403` com `reason: "bot_suspended"`:
+
+  ```json
+  { "error": "This bot has been suspended by GoLive's administration.", "reason": "bot_suspended" }
+  ```
+
+- a conexão WebSocket recebe [`banned`](./eventos#banned) e fecha com o código `4003`;
+- ninguém consegue adicionar o bot a um grupo.
+
+Não adianta repetir nem reconectar: pare e espere. Nada do bot é apagado — quando a suspensão acaba, ele volta exatamente como estava, nos mesmos grupos.
+
+```js
+if (err.status === 403 && err.body?.reason === "bot_suspended") {
+  console.error("Bot suspenso pela administração do GoLive.");
+  process.exit(1);
+}
+```
+
 ## Mensagens de erro frequentes
 
 | Status | `error` | Causa |
@@ -82,6 +104,7 @@ A versão completa, com repetição em falhas de rede, é o [`rest.js` do bot co
 | 400 | `At most 20 different reactions per message.` | Limite de reações. |
 | 400 | `Body cannot be empty when content-type is set to 'application/json'` | `Content-Type` JSON sem corpo — mande `{}`. |
 | 401 | `unauthorized` | Token. Veja [Autenticação](/guia/autenticacao#erros-de-autenticacao). |
+| 403 | `This bot has been suspended by GoLive's administration.` | Bot suspenso (`reason: "bot_suspended"`). Toda rota responde isso até a suspensão acabar. |
 | 403 | `You do not have permission to ...` | Falta de permissão do bot. |
 | 403 | `You cannot do this to someone with a role equal to or above your own.` | Hierarquia: suba o cargo do bot. |
 | 403 | `Nobody can remove the group's owner.` | Alvo é o dono. |

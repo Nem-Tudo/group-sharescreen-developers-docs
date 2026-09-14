@@ -103,7 +103,8 @@ Se o token vazar: [gere um novo](./criando-um-bot#perdi-o-token-o-token-vazou) �
 
 | Sintoma | Causa provável |
 |---|---|
-| HTTP `401 {"error":"unauthorized"}` | Token errado, revogado (gerou outro), sem o prefixo `Bot ` ou com `Bearer`. |
+| HTTP `401 {"error":"unauthorized"}` | Token errado, revogado (gerou outro, ou a administração revogou), sem o prefixo `Bot ` ou com `Bearer`. |
+| HTTP `403` com `"reason":"bot_suspended"` | O bot foi suspenso pela administração do GoLive. Toda rota responde assim até a suspensão acabar — veja [Bot suspenso](/referencia/erros#bot-suspenso). |
 | WebSocket responde `register-error` com `"Invalid name."` | O token do `register` é inválido. Sem um token válido o servidor trata a conexão como um visitante sem nome — daí a mensagem estranha. |
 | WebSocket responde `banned` e fecha com código `4003` | A conta do bot (ou o IP) foi banida. Não adianta reconectar. |
 | WebSocket fecha com código `4004` | Alguém gerou um novo token no portal, ou o bot foi excluído. Não adianta reconectar com o token antigo. |

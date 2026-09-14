@@ -220,7 +220,7 @@ Um `typing: true` sem o `false` depois expira sozinho em alguns segundos.
 
 ### `group-notify`
 
-O bot foi mencionado (`<@id>`, `@everyone`, um cargo dele) ou alguém respondeu a uma mensagem dele. Chega **além** do `group-message`.
+O bot foi mencionado (`<@id>`, `@everyone`, um cargo dele, um `@online` enquanto estava conectado, uma [combinação](/guia/enviando-mensagens#online-offline-e-combinacoes) que o inclui) ou alguém respondeu a uma mensagem dele. Chega **além** do `group-message`.
 
 ```js
 {

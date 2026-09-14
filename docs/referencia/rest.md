@@ -75,6 +75,7 @@ https://apigolive.nemtudo.me
 | <span class="http post">POST</span> | [`/groups/:id/channels/:cid/messages`](#post-groups-id-channels-cid-messages) | Envia mensagem. | `sendMessages` | 120 |
 | <span class="http patch">PATCH</span> | [`/groups/:id/channels/:cid/messages/:mid`](#patch-groups-id-channels-cid-messages-mid) | Edita o texto de uma mensagem. | só a própria, e `sendMessages` | 60 |
 | <span class="http delete">DELETE</span> | [`/groups/:id/channels/:cid/messages/:mid`](#delete-groups-id-channels-cid-messages-mid) | Apaga mensagem. | própria, ou `manageMessages` | 60 |
+| <span class="http get">GET</span> | [`/groups/:id/channels/:cid/mention-audience?m=`](#get-groups-id-channels-cid-mention-audience) | Quantos uma menção avisaria agora. | ver a sala | 60 |
 | <span class="http post">POST</span> | [`/groups/:id/channels/:cid/messages/:mid/reactions`](#post-groups-id-channels-cid-messages-mid-reactions) | Coloca/tira reação. | `addReactions` / `react` | 120 |
 | <span class="http get">GET</span> | [`/groups/:id/channels/:cid/messages/:mid/reactions?emoji=`](#get-groups-id-channels-cid-messages-mid-reactions) | Quem reagiu com um emoji, paginado. | ver a sala | 120 |
 | <span class="http delete">DELETE</span> | `/groups/:id/channels/:cid/messages/:mid/reactions?emoji=&userId=` | Tira a reação de alguém. Resposta: `{ reactions }`. | a própria, ou `manageReactions` | 120 |
@@ -357,6 +358,8 @@ Query: `before` (ms, opcional). Até 50 mensagens anteriores a `before`, da mais
 }
 ```
 
+Numa mensagem com `@online`, `@offline` ou `@expr:` em `mentions`, vem também `pingedMe: boolean` — se ela alcançou **quem está lendo** quando foi enviada (quem estava online naquele momento não dá para saber depois).
+
 ### POST /groups/:id/channels/:cid/messages
 
 | Campo | Tipo | Descrição |
@@ -365,7 +368,7 @@ Query: `before` (ms, opcional). Até 50 mensagens anteriores a `before`, da mais
 | `images` | string[] | Até 3 *data URLs* (PNG, JPEG, WebP, GIF, AVIF); 5 MB cada, 8 MB no total. Exige `sendImages`. |
 | `url` | string | GIF do Giphy. Exige `sendGifs`. |
 | `replyTo` | objeto | `{ id, name, text?, kind?, images?, userId? }`. `userId` notifica o autor. |
-| `mentions` | string[] | `"@everyone"` (exige `mentionEveryone`) e `"@role:<id>"`. Pessoas vão no texto como `<@id>`. |
+| `mentions` | string[] | `"@everyone"` (exige `mentionEveryone`), `"@role:<id>"`, `"@online"`, `"@offline"` e `"@expr:<expressão>"` ([combinações](/guia/enviando-mensagens#online-offline-e-combinacoes)). Pessoas vão no texto como `<@id>`. |
 | `nonce` | string | 8–64 caracteres `[A-Za-z0-9_-]`. Repetir com o mesmo nonce em até 10 min devolve a mensagem já criada. |
 
 Pelo menos um de `text`, `images`, `url`. Resposta: `{ message, author, nonce? }`. Guia: [Enviando mensagens](/guia/enviando-mensagens).
@@ -375,7 +378,7 @@ Pelo menos um de `text`, `images`, `url`. Resposta: `{ message, author, nonce? }
 | Campo | Tipo | Descrição |
 |---|---|---|
 | `text` | string | O texto novo. Mesmas regras do envio: até 2000 caracteres, pessoas como `<@id>`. |
-| `mentions` | string[] | Opcional. `"@everyone"` e `"@role:<id>"`, como no envio. |
+| `mentions` | string[] | Opcional. As mesmas entradas do envio. Quem `@online`/`@offline`/`@expr:` alcança é recalculado com quem está online **agora**. |
 
 Só o autor edita, nem com `manageMessages` dá para editar a mensagem de outra pessoa. Imagens, reações, `replyTo` e `ts` ficam como estavam. Quem a mensagem menciona é recalculado a partir do texto novo, mas a edição **não notifica ninguém**. Resposta: `{ message }`, com `editedAt` preenchido. Se o texto for igual ao atual, nada muda e `editedAt` não é marcado.
 
@@ -387,6 +390,16 @@ Todos que veem a sala recebem [`group-message-updated`](/referencia/eventos#grou
 ### DELETE /groups/:id/channels/:cid/messages/:mid
 
 Sem corpo. Resposta: `{ ok: true }`. `403` se não for do bot e ele não tiver `manageMessages`.
+
+### GET /groups/:id/channels/:cid/mention-audience
+
+Query: `m`, uma entrada de `mentions` (`"@everyone"`, `"@online"`, `"@role:<id>"`, `"@expr:…"`). Quem ela avisaria se fosse enviada nesta sala agora, sem contar o próprio bot:
+
+```js
+{ allowed: true, count: 12, online: 5 }
+```
+
+`allowed` diz se o bot pode mandar essa menção aqui (a mesma regra do envio). `400` com uma entrada inválida ou um cargo que não existe.
 
 ### POST /groups/:id/channels/:cid/messages/:mid/reactions
 
