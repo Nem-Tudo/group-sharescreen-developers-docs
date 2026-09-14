@@ -20,6 +20,7 @@ Tudo o que trafega em `wss://apigolive.nemtudo.me/ws`. Cada mensagem é um objet
 | [`group-typing`](#group-typing) | Grupos | Alguém começou/parou de digitar. |
 | [`group-notify`](#group-notify) | Grupos | O bot foi mencionado ou respondido. |
 | [`group-updated`](#group-updated) | Grupos | Algo mudou no grupo. |
+| [`group-added`](#group-added) | Grupos | Alguém adicionou o bot a um grupo. |
 | [`group-removed`](#group-removed) | Grupos | O bot saiu/foi tirado de um grupo. |
 | [`group-voice`](#group-voice) | Grupos | Mudou quem está nas salas de voz. |
 | [`group-read`](#group-read) | Grupos | Outra conexão do bot marcou uma sala como lida. |
@@ -127,6 +128,7 @@ Resposta a uma mensagem malformada enviada pelo bot (em geral, nas salas ao vivo
 | `1006` | Caiu sem aviso (rede, servidor reiniciando, sem resposta ao ping). | Sim, com espera. |
 | `4000` | Outra conexão assumiu esta sessão. | Não (só acontece reutilizando `clientId`). |
 | `4003` | Banido. | **Não.** |
+| `4004` | O token foi trocado no portal do desenvolvedor, ou o bot foi excluído. | **Não** com o token antigo. |
 
 ---
 
@@ -242,6 +244,14 @@ Depende do nível de notificação do bot no grupo (padrão: só menções) — 
 ```
 
 Algo mudou: nome, ícone, salas, categorias, cargos, permissões, alguém entrou ou saiu. Não diz o quê — se você guarda dados do grupo, busque de novo com [`GET /groups/:id`](./rest#get-groups-id).
+
+### `group-added`
+
+```js
+{ type: "group-added", groupId: "k2x9d0a1b3", addedBy: "a41c..." }
+```
+
+Alguém que gerencia o grupo acabou de adicionar o bot (`addedBy` é o id dessa pessoa). É assim — e só assim — que um bot entra num grupo: veja [Colocando o bot num grupo](/guia/entrando-em-grupos). A partir daqui o bot recebe os eventos do grupo; busque as salas com [`GET /groups/:id`](./rest#get-groups-id).
 
 ### `group-removed`
 

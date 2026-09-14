@@ -5,7 +5,7 @@ As salas ao vivo são as salas de transmissão de tela do GoLive — `golive.nem
 ::: warning Experimental
 O chat das salas ao vivo foi feito para pessoas num navegador, não para bots. Funciona, mas:
 
-- Se o GoLive estiver exigindo verificação anti-robô para entrar em salas, o bot recebe `captcha-required` e **não consegue entrar**. Não há como um bot resolver o desafio.
+- Bots **não passam** pela verificação anti-robô (captcha) para entrar em salas — ela é só para pessoas.
 - O bot aparece na lista de participantes (com a etiqueta BOT).
 - O protocolo pode mudar sem aviso. Para bots, os **grupos** são o lugar certo.
 :::
@@ -40,7 +40,7 @@ Deu certo, chega o estado da sala:
 }
 ```
 
-Deu errado, chega `join-error` (com `reason` e `message`) ou `captcha-required`.
+Deu errado, chega `join-error` (com `reason` e `message`).
 
 ## Mensagens do chat
 
@@ -117,7 +117,7 @@ ws.on("message", (data) => {
     ws.send(JSON.stringify({ type: "join", room: ROOM }));
   }
 
-  if (event.type === "captcha-required" || event.type === "join-error") {
+  if (event.type === "join-error") {
     console.error("Não consegui entrar:", event.message);
   }
 

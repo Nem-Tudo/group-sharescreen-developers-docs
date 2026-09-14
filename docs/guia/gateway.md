@@ -108,6 +108,7 @@ function connect() {
 
   ws.on("close", (code) => {
     if (code === 4003) return console.error("Banido — não reconecte.");
+    if (code === 4004) return console.error("Token trocado ou bot excluído — pegue o token novo no portal.");
     const delay = Math.min(30_000, 1000 * 2 ** attempt) + Math.random() * 1000;
     attempt += 1;
     console.log(`Caiu (${code}). Tentando de novo em ${Math.round(delay)} ms`);
@@ -129,6 +130,7 @@ O servidor aceita no máximo **30 aberturas de conexão por minuto por IP**. Um 
 | Situação | O que fazer |
 |---|---|
 | Fechou com código `4003` (ou recebeu `{ type: "banned" }`) | A conta ou o IP está banido. Pare. |
+| Fechou com código `4004` | O token foi trocado no portal, ou o bot foi excluído. Pare e confira o token. |
 | `register-error` **sem** `retryable` (ex.: `"Invalid name."`) | O token é inválido. Pare e confira o token. |
 | `register-error` com `retryable: true` | O servidor está iniciando. Mande o `register` de novo em alguns segundos. |
 

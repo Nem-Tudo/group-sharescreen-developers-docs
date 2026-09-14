@@ -1,7 +1,8 @@
 // Roda os bots de exemplo contra uma imitação local da API (scripts/mock-api.mjs)
 // e confere que cada recurso documentado funciona: registro, comandos,
-// respostas, menções, permissões, páginas por reação, enquete, DMs e
-// reconexão. Nada aqui fala com a API de verdade.
+// respostas, menções, permissões, páginas por reação, enquete, DMs,
+// reconexão, entrada em grupos e token revogado. Nada aqui fala com a API de
+// verdade.
 //
 //   npm run check:examples
 
@@ -294,6 +295,41 @@ console.log("examples/bot-completo — GoLiveClient");
   await step("não apaga a DM de outra pessoa", async () => {
     const { message } = await as("user-2", "POST", "/dm/bot-1", { text: "oi" });
     await assert.rejects(client.deleteDirectMessage("user-2", message.id), /delete your own/);
+  });
+
+  await step("só puxa DM com quem divide um grupo ou já escreveu antes", async () => {
+    await assert.rejects(client.sendDirectMessage("user-99", "oi"), /only message people/);
+    await as("user-99", "POST", "/dm/bot-1", { text: "oi bot" });
+    const reply = await client.sendDirectMessage("user-99", "Oi! 👋");
+    assert.equal(reply.to, "user-99");
+  });
+
+  await step("não entra em grupo sozinho, nem por convite", async () => {
+    await assert.rejects(client.rest.post("/invites/AbC12345/accept"), /cannot join groups on their own/);
+    await assert.rejects(client.rest.post("/groups/grp1/join"), /cannot join groups on their own/);
+  });
+
+  await step("recebe groupAdd quando quem gerencia o grupo adiciona o bot", async () => {
+    mock.removeBotFromGroup();
+    const added = once(client, "groupAdd");
+    const res = await as("user-1", "POST", "/groups/grp1/bots", { botId: "bot-1" });
+    assert.equal(res.groupId, "grp1");
+    const [event] = await added;
+    assert.deepEqual(event, { type: "group-added", groupId: "grp1", addedBy: "user-1" });
+    assert.equal(client.installUrl(), "https://golive.nemtudo.me/bots/bot-1/add");
+  });
+
+  await step("para de reconectar quando o token é revogado (4004)", async () => {
+    const failed = once(client, "error");
+    let reconnected = false;
+    const onReady = () => (reconnected = true);
+    client.on("reconnected", onReady);
+    mock.revokeToken();
+    const [err] = await failed;
+    assert.match(err.message, /token deste bot foi trocado/);
+    await sleep(1500);
+    client.off("reconnected", onReady);
+    assert.equal(reconnected, false);
   });
 
   client.destroy();

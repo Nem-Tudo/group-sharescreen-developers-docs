@@ -1,7 +1,10 @@
 // Uma imitação pequena da API do GoLive, só para testar os exemplos sem tocar
 // na produção. Reproduz o que importa para um bot: o registro no WebSocket,
 // os eventos de grupo e DM, as rotas de mensagens/reações/moderação e as
-// mesmas validações (emoji padrão, corpo JSON vazio, dono não pode ser expulso).
+// mesmas validações (emoji padrão, corpo JSON vazio, dono não pode ser expulso)
+// — e as regras que só valem para bots: não entrar em grupo sozinho, ser
+// adicionado por quem gerencia o grupo, só puxar DM com quem divide um grupo
+// ou já escreveu antes, e ser desconectado (código 4004) quando o token muda.
 
 import http from "node:http";
 import { EventEmitter } from "node:events";
@@ -12,6 +15,7 @@ const STANDARD_EMOJI_RE = new RegExp("^\\p{RGI_Emoji}$", "v");
 
 const OFF = (keys) => Object.fromEntries(keys.map((k) => [k, false]));
 const MANAGE = ["administrator", "manageGroup", "manageChannels", "manageRoles", "kickMembers", "banMembers", "manageMessages", "manageReactions", "createInvites"];
+const BOT_SELF_JOIN = "Bots cannot join groups on their own. Someone with the \"manage group\" permission has to add the bot.";
 
 export function createMockApi({ botToken }) {
   const events = new EventEmitter();
@@ -27,6 +31,8 @@ export function createMockApi({ botToken }) {
     account("user-3", "joao", "João"),
   ]) accounts.set(a.id, a);
   for (let i = 10; i < 32; i += 1) accounts.set(`user-${i}`, account(`user-${i}`, `pessoa${i}`, `Pessoa ${i}`));
+  // Alguém de fora do grupo — para a regra de DM dos bots.
+  accounts.set("user-99", account("user-99", "estranho", "Estranho"));
 
   const group = {
     id: "grp1",
@@ -36,7 +42,7 @@ export function createMockApi({ botToken }) {
     roles: [{ id: "mod", name: "Moderação", color: null, position: 1, hoist: true, mentionable: false, permissions: { manage: { ...OFF(MANAGE), kickMembers: true }, general: {}, text: {}, voice: {} } }],
   };
   const memberRoles = {};
-  const members = new Set(accounts.keys());
+  const members = new Set([...accounts.keys()].filter((id) => id !== "user-99"));
   const channel = { id: "chan1", kind: "text", name: "geral" };
   const messages = new Map();
   const dms = new Map();
@@ -87,6 +93,23 @@ export function createMockApi({ botToken }) {
       return a ? { account: a, live: null } : [404, { error: "User not found." }];
     }],
     ["GET", /^\/groups$/, (me) => ({ groups: members.has(me) ? [{ id: group.id, name: group.name }] : [] })],
+    // Bot nunca entra sozinho: nem por convite, nem num grupo público.
+    ["POST", /^\/invites\/([^/]+)\/accept$/, (me) =>
+      accounts.get(me)?.bot ? [403, { error: BOT_SELF_JOIN, reason: "bot_self_join" }] : { groupId: group.id }],
+    ["POST", /^\/groups\/([^/]+)\/join$/, (me) =>
+      accounts.get(me)?.bot ? [403, { error: BOT_SELF_JOIN, reason: "bot_self_join" }] : { groupId: group.id }],
+    // Quem gerencia o grupo (aqui, a dona) adiciona o bot.
+    ["POST", /^\/groups\/grp1\/bots$/, (me, _p, body) => {
+      if (accounts.get(me)?.bot) return [403, { error: "Only a person signed in to their account can add bots." }];
+      if (me !== group.ownerId) return [403, { error: "You do not have permission to manage the group." }];
+      if (!accounts.get(body.botId)?.bot) return [404, { error: "Bot not found." }];
+      if (!members.has(body.botId)) {
+        members.add(body.botId);
+        send(body.botId, { type: "group-added", groupId: group.id, addedBy: me });
+        tellMembers({ type: "group-updated", groupId: group.id });
+      }
+      return { groupId: group.id };
+    }],
     ["GET", /^\/groups\/grp1$/, () => ({ group: { ...group, memberCount: members.size }, channels: [channel], memberRoles })],
     ["GET", /^\/groups\/grp1\/members$/, () => ({
       members: [...members].map((id) => ({ ...groupUser(id), role: id === group.ownerId ? "owner" : "member", roleIds: memberRoles[id] ?? [], online: id === "bot-1", joinedAt: now })),
@@ -233,6 +256,12 @@ export function createMockApi({ botToken }) {
       return { ok: true };
     }],
     ["POST", /^\/dm\/([^/]+)$/, (me, [to], body) => {
+      // Um bot só puxa conversa com quem divide um grupo com ele ou já escreveu antes.
+      const convo = [me, to].sort().join(":");
+      const wroteFirst = [...dms.values()].some((m) => m.conversationId === convo && m.from === to);
+      if (accounts.get(me)?.bot && !(members.has(me) && members.has(to)) && !wroteFirst) {
+        return [403, { error: "A bot can only message people who share a group with it or who have messaged it first.", reason: "bot_dm_not_allowed" }];
+      }
       const message = { id: randomUUID(), conversationId: [me, to].sort().join(":"), from: me, to, text: body.text, kind: "text", ...(body.replyTo ? { replyTo: body.replyTo } : {}), ts: Date.now() };
       const a = accounts.get(me);
       const fromUser = { id: a.id, username: a.username, displayName: a.displayName, flags: [], bot: a.bot, avatarUrl: null, nameColor: null };
@@ -297,6 +326,10 @@ export function createMockApi({ botToken }) {
     group,
     listen: () => new Promise((resolve) => server.listen(0, "127.0.0.1", () => resolve(server.address().port))),
     dropConnections: () => { for (const ws of wss.clients) ws.terminate(); },
+    /** Tira o bot do grupo sem avisar — para testar ele sendo adicionado de novo. */
+    removeBotFromGroup: () => members.delete("bot-1"),
+    /** O que acontece quando o dono troca o token no portal: o WebSocket fecha com 4004. */
+    revokeToken: () => { for (const ws of sockets.get("bot-1") ?? []) ws.close(4004, "token-reset"); },
     close: () => new Promise((resolve) => { for (const ws of wss.clients) ws.terminate(); wss.close(); server.close(() => resolve()); }),
     announce: (payload) => tellMembers(payload),
   };

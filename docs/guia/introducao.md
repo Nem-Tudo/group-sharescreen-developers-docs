@@ -6,15 +6,21 @@ Os exemplos são em **JavaScript (Node.js)**, mas a API é HTTP + WebSocket comu
 
 ## O que é um bot no GoLive?
 
-Um bot é **uma conta como qualquer outra**, com três diferenças:
+Um bot é **uma conta** do GoLive controlada pelo seu código. Ele é criado e gerenciado no [portal do desenvolvedor](https://golive-developers.nemtudo.me), e difere de uma pessoa nestes pontos:
 
 | | Pessoa | Bot |
 |---|---|---|
 | Como entra | senha, Discord ou Google | um **token** secreto |
 | Nome de usuário | o que a pessoa escolher | sempre termina em `_bot` (ex.: `@musica_bot`) |
 | Aparência | nome normal | nome com a etiqueta **BOT** ao lado |
+| Entrar num grupo | por convite ou num grupo público | **só adicionado** por quem gerencia o grupo ([como](./entrando-em-grupos)) |
+| Verificação anti-robô (captcha) | às vezes | **nunca** |
+| Avatar próprio, banner, degradê, música | com plano Pro Max | **sempre, sem plano** |
+| Criar ou ser dono de grupo | sim | não |
+| Amigos · ligações · plano Pro | sim | não |
+| Puxar conversa por DM | com qualquer conta | com quem divide um grupo com o bot, ou já escreveu para ele |
 
-Tirando isso, o bot é tratado igual a uma pessoa: tem perfil em `golive.nemtudo.me/user/<usuario>`, entra em grupos por convite, recebe cargos, obedece às mesmas permissões e aos mesmos limites.
+Tirando isso, o bot é tratado igual a uma pessoa: tem perfil em `golive.nemtudo.me/user/<usuario>`, recebe cargos, obedece às mesmas permissões e aos mesmos limites.
 
 ## O que um bot pode fazer
 
@@ -22,8 +28,8 @@ Tirando isso, o bot é tratado igual a uma pessoa: tem perfil em `golive.nemtudo
 - ⌨️ **Responder a comandos** como `!ajuda`, `!dado 20` ou `!enquete`.
 - 😀 **Reagir** a mensagens e **perceber as reações** das pessoas — a base de enquetes, páginas e cargos por reação.
 - 🛡️ **Moderar**: apagar mensagens, expulsar e banir membros, criar e distribuir cargos.
-- ✉️ **Conversar por mensagem direta (DM)** com qualquer conta.
-- 👤 **Ter um perfil**: nome de exibição, bio e avatar.
+- ✉️ **Conversar por mensagem direta (DM)** com quem divide um grupo com ele ou já escreveu para ele.
+- 👤 **Ter um perfil completo**: nome de exibição, bio, avatar próprio, banner, degradê e música.
 
 ## Como funciona: duas conexões
 
@@ -71,16 +77,16 @@ Todas as rotas da API recebem e devolvem **JSON**.
 
 ## O que você precisa
 
-- Uma **conta no GoLive** (é ela que cria e é dona dos bots).
+- Uma **conta no GoLive** (é ela que cria e é dona dos bots, no [portal do desenvolvedor](https://golive-developers.nemtudo.me)).
 - **Node.js 20.6 ou mais novo** — confira com `node -v`.
 - Um editor de código e um terminal.
 
 ## Por onde seguir
 
-1. [Crie seu bot](./criando-um-bot) e pegue o token.
+1. [Crie seu bot](./criando-um-bot) no portal do desenvolvedor e pegue o token.
 2. Entenda a [autenticação](./autenticacao).
 3. Escreva [seu primeiro bot](./primeiro-bot) — um ping-pong em 30 linhas.
-4. [Coloque o bot num grupo](./entrando-em-grupos).
+4. [Coloque o bot num grupo](./entrando-em-grupos) — quem gerencia o grupo adiciona pelo link do bot.
 5. Depois, avance: [comandos](./comandos), [reações](./reacoes), [páginas por reação](./paginas-por-reacao), [moderação](./moderacao).
 
 ::: tip Pressa?

@@ -14,6 +14,9 @@ client.on("ready", async (me) => {
   console.log(`✅ Conectado como ${me.displayName} (@${me.username})`);
   const groups = await client.fetchGroups();
   console.log(`📚 Estou em ${groups.length} grupo(s): ${groups.map((g) => g.name).join(", ") || "nenhum"}`);
+  if (groups.length === 0) {
+    console.log(`➕ Para me colocar num grupo, quem gerencia o grupo abre: ${client.installUrl(process.env.GOLIVE_SITE_URL)}`);
+  }
   console.log(`⌨️  ${commands.commands.size} comandos carregados. Prefixo: ${commands.prefix}`);
 });
 
@@ -45,6 +48,10 @@ client.on("directMessage", async (dm) => {
   }
 });
 
+client.on("groupAdd", async ({ groupId }) => {
+  const { group } = await client.fetchGroup(groupId);
+  console.log(`🎉 Fui adicionado ao grupo ${group.name}.`);
+});
 client.on("groupRemove", ({ groupId, reason }) => console.log(`🚪 Saí do grupo ${groupId} (${reason}).`));
 
 // Um erro esquecido num handler não pode derrubar o bot.

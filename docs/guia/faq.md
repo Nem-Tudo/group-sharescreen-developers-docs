@@ -48,7 +48,19 @@ Não — o texto aparece como foi escrito. Use emoji e quebras de linha para org
 
 ## O bot pode entrar em chamadas de voz ou transmitir?
 
-Não. Bots participam das salas de texto, das DMs e, de forma [experimental](./salas-ao-vivo), do chat das salas ao vivo.
+Não. Bots participam das salas de texto, das DMs e, de forma [experimental](./salas-ao-vivo), do chat das salas ao vivo. Um bot também não liga para ninguém nem recebe ligações.
+
+## Como coloco o bot num grupo com um convite?
+
+Não dá: bot não entra em grupo sozinho, nem com convite. Quem gerencia o grupo abre o **link do bot** (aba **Instalação** do [portal do desenvolvedor](https://golive-developers.nemtudo.me)) e escolhe o grupo. Veja [Colocando o bot num grupo](./entrando-em-grupos).
+
+## O bot precisa passar pelo captcha?
+
+Não. A verificação anti-robô é para pessoas; conexões com token de bot nunca recebem `captcha-required`.
+
+## O bot pode ter amigos ou assinar o Pro?
+
+Não. Bots não mandam nem recebem pedidos de amizade, e não compram nem recebem planos. Mas não precisam: avatar próprio, banner, degradê e música de perfil já vêm liberados para bots.
 
 ## O bot pode tirar a reação de outra pessoa?
 

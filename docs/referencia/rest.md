@@ -17,12 +17,15 @@ https://apigolive.nemtudo.me
 | Método | Rota | O que faz | Limite |
 |---|---|---|---|
 | <span class="http get">GET</span> | [`/auth/me`](#get-auth-me) | A conta do bot. | 120 |
-| <span class="http patch">PATCH</span> | [`/account/profile`](#patch-account-profile) | Edita nome, bio e avatar do bot. | 30 |
+| <span class="http patch">PATCH</span> | [`/account/profile`](#patch-account-profile) | Edita o perfil do bot (nome, bio, avatar, banner, degradê, música). | 30 |
 | <span class="http get">GET</span> | [`/account/avatars`](#get-account-avatars) | Avatares que o bot pode usar. | 60 |
 | <span class="http get">GET</span> | [`/users/:usuarioOuId`](#get-users-id) | Perfil público de uma conta. **Pública.** | 60 |
-| <span class="http get">GET</span> | `/account/bots` | Bots de uma conta. **Sessão de pessoa**, não de bot. | 60 |
-| <span class="http post">POST</span> | `/account/bots` | Cria um bot. **Sessão de pessoa.** | 5 / 15 min |
-| <span class="http post">POST</span> | `/account/bots/:id/token` | Gera novo token. **Sessão de pessoa.** | 10 / 5 min |
+| <span class="http get">GET</span> | [`/account/bots`](#rotas-do-dono-do-bot) | Bots de uma conta. **Sessão de pessoa**, não de bot. | 60 |
+| <span class="http post">POST</span> | [`/account/bots`](#rotas-do-dono-do-bot) | Cria um bot. **Sessão de pessoa.** | 5 / 15 min |
+| <span class="http get">GET</span> | [`/account/bots/:id`](#rotas-do-dono-do-bot) | Um bot e os grupos em que está. **Sessão de pessoa.** | 120 |
+| <span class="http patch">PATCH</span> | [`/account/bots/:id`](#rotas-do-dono-do-bot) | Edita o perfil do bot e se ele é público. **Sessão de pessoa.** | 30 |
+| <span class="http post">POST</span> | [`/account/bots/:id/token`](#rotas-do-dono-do-bot) | Gera novo token (derruba as conexões do antigo). **Sessão de pessoa.** | 10 / 5 min |
+| <span class="http delete">DELETE</span> | [`/account/bots/:id`](#rotas-do-dono-do-bot) | Exclui o bot. **Sessão de pessoa.** | 10 / 5 min |
 
 ### Grupos
 
@@ -31,7 +34,7 @@ https://apigolive.nemtudo.me
 | <span class="http get">GET</span> | [`/groups`](#get-groups) | Grupos em que o bot está. | — | 120 |
 | <span class="http get">GET</span> | [`/groups/:id`](#get-groups-id) | Salas, cargos, permissões e o bot no grupo. | membro | 240 |
 | <span class="http get">GET</span> | `/groups/:id/voice` | Quem está em cada sala de voz. | membro | 240 |
-| <span class="http post">POST</span> | [`/groups`](#post-groups) | Cria um grupo (o bot vira dono). | — | 10 |
+| <span class="http post">POST</span> | [`/groups`](#post-groups) | Cria um grupo. **Recusado para bots** (`403`). | — | 10 |
 | <span class="http patch">PATCH</span> | [`/groups/:id`](#patch-groups-id) | Muda nome e descrição. | `manageGroup` | 30 |
 | <span class="http post">POST</span> | `/groups/:id/icon` | Troca o ícone (`{ image: dataURL }`). | `manageGroup` | 10 |
 | <span class="http delete">DELETE</span> | `/groups/:id/icon` | Remove o ícone. | `manageGroup` | 30 |
@@ -39,10 +42,12 @@ https://apigolive.nemtudo.me
 | <span class="http put">PUT</span> | `/groups/:id/visibility` | `{ visibility: "public" \| "private" }`. | dono | 20 |
 | <span class="http put">PUT</span> | `/groups/:id/location` | Posição no mapa (`{ location: { lat, lng } \| null }`). | `manageGroup` | 30 |
 | <span class="http put">PUT</span> | `/groups/:id/custom-invite` | Link personalizado (`{ code }`). Plano Pro Max do dono. | `manageGroup` | 20 |
-| <span class="http post">POST</span> | `/groups/:id/transfer` | Passa o grupo para outro membro (`{ userId }`). | dono | 10 |
+| <span class="http post">POST</span> | `/groups/:id/transfer` | Passa o grupo para outro membro (`{ userId }`). Nunca para um bot. | dono | 10 |
 | <span class="http post">POST</span> | [`/groups/:id/leave`](#post-groups-id-leave) | Sai do grupo. | membro | 20 |
 | <span class="http delete">DELETE</span> | `/groups/:id` | Apaga o grupo. | dono | 10 |
-| <span class="http post">POST</span> | [`/groups/:id/join`](#post-groups-id-join) | Entra num grupo público. | — | 20 |
+| <span class="http post">POST</span> | [`/groups/:id/join`](#post-groups-id-join) | Entra num grupo público. **Recusado para bots** (`403`). | — | 20 |
+| <span class="http post">POST</span> | [`/groups/:id/bots`](#post-groups-id-bots) | Adiciona um bot ao grupo. **Sessão de pessoa.** | `manageGroup` | 20 |
+| <span class="http get">GET</span> | [`/bots/:idOuUsuario`](#get-bots-id) | O bot e os grupos em que quem pergunta pode adicioná-lo. **Pública.** | — | 60 |
 | <span class="http get">GET</span> | `/groups/:id/preview` | Cartão de um grupo público. **Pública.** | — | 60 |
 | <span class="http get">GET</span> | `/groups/search?q=` | Busca grupos públicos pelo nome. **Pública.** | — | 60 |
 | <span class="http get">GET</span> | `/groups/map` | Grupos no mapa-múndi. **Pública.** | — | 60 |
@@ -105,7 +110,7 @@ https://apigolive.nemtudo.me
 | <span class="http post">POST</span> | [`/groups/:id/invites`](#post-groups-id-invites) | Cria convite. | `createInvites` | 20 |
 | <span class="http delete">DELETE</span> | `/groups/:id/invites/:code` | Revoga convite. | criador, ou `manageGroup` | 30 |
 | <span class="http get">GET</span> | [`/invites/:code`](#get-invites-code) | Para onde o convite leva. **Pública.** | — | 60 |
-| <span class="http post">POST</span> | [`/invites/:code/accept`](#post-invites-code-accept) | Aceita o convite. | — | 20 |
+| <span class="http post">POST</span> | [`/invites/:code/accept`](#post-invites-code-accept) | Aceita o convite. **Recusado para bots** (`403`). | — | 20 |
 
 ### Mensagens diretas
 
@@ -113,7 +118,7 @@ https://apigolive.nemtudo.me
 |---|---|---|---|
 | <span class="http get">GET</span> | `/dm` | Conversas do bot. | 120 |
 | <span class="http get">GET</span> | `/dm/:userId?before=` | Histórico com uma conta. | 120 |
-| <span class="http post">POST</span> | [`/dm/:userId`](#post-dm-userid) | Envia DM. | 60 |
+| <span class="http post">POST</span> | [`/dm/:userId`](#post-dm-userid) | Envia DM (bot: só para quem divide um grupo ou já escreveu). | 60 |
 | <span class="http post">POST</span> | `/dm/:userId/read` | Marca como lida. | 120 |
 | <span class="http post">POST</span> | `/dm/:userId/typing` | "Está digitando...". | 120 |
 | <span class="http post">POST</span> | `/dm/:userId/messages/:mid/reactions` | Reage (`{ emoji, on? }`). | 120 |
@@ -128,8 +133,8 @@ https://apigolive.nemtudo.me
 |---|---|---|---|
 | <span class="http get">GET</span> | `/social` | Amigos, pedidos recebidos/enviados e bloqueados. | 120 |
 | <span class="http get">GET</span> | `/social/search?q=` | Procura contas por nome (mín. 2 letras). | 60 |
-| <span class="http post">POST</span> | `/social/friends/:userId` | Pede amizade. | 30 |
-| <span class="http post">POST</span> | `/social/friends/:userId/accept` | Aceita um pedido. | 30 |
+| <span class="http post">POST</span> | `/social/friends/:userId` | Pede amizade. **Recusado para bots e com bot como alvo** (`403`). | 30 |
+| <span class="http post">POST</span> | `/social/friends/:userId/accept` | Aceita um pedido. **Recusado para bots** (`403`). | 30 |
 | <span class="http delete">DELETE</span> | `/social/friends/:userId` | Desfaz amizade ou pedido. | 30 |
 | <span class="http post">POST</span> | `/social/blocks/:userId` | Bloqueia. | 30 |
 | <span class="http delete">DELETE</span> | `/social/blocks/:userId` | Desbloqueia. | 30 |
@@ -168,9 +173,12 @@ A conta dona do token. Primeira chamada de todo bot: confere o token e dá o id.
 |---|---|
 | `displayName` | 1 a 24 caracteres. |
 | `bio` | Até 500 caracteres; `null` apaga. |
-| `avatar` | Caminho de um avatar liberado (veja abaixo); `null` remove. *Data URL* só com o plano Pro Max. |
+| `avatar` | Caminho de um avatar padrão ou da galeria, ou uma *data URL* (imagem própria); `null` remove. |
+| `banner` | *Data URL*; `null` remove. |
+| `profileTheme` | `{ from, to, angle }` — degradê do cartão; `null` remove. |
+| `song` · `songVolume` | Link de vídeo do YouTube · volume 0–100. `null` remove a música. |
 
-Mande só o que for mudar. Detalhes em [Perfil do bot](/guia/perfil-do-bot).
+Para pessoas, a galeria é do Pro e o resto do Pro Max. **Bots têm tudo, sem plano.** Mande só o que for mudar. Detalhes em [Perfil do bot](/guia/perfil-do-bot).
 
 ### GET /account/avatars
 
@@ -178,10 +186,23 @@ Mande só o que for mudar. Detalhes em [Perfil do bot](/guia/perfil-do-bot).
 {
   defaults: ["/assets/default_avatars/01.png", "/assets/default_avatars/02.png"],
   gallery: ["/assets/avatars/01.png", /* ... */],
-  canUseGallery: false,   // plano Pro
-  canUpload: false        // plano Pro Max
+  canUseGallery: true,    // sempre true para bots
+  canUpload: true         // true para bots, se o servidor aceita envio de imagens
 }
 ```
+
+### Rotas do dono do bot
+
+`/account/bots` e `/account/bots/:id` são o que o [portal do desenvolvedor](https://golive-developers.nemtudo.me) usa. Exigem o **token de sessão de uma pessoa** (`Bearer`); com um token de bot respondem `401`. Detalhes e formatos em [Criando seu bot](/guia/criando-um-bot#pela-api-avancado).
+
+| Rota | Corpo | Resposta |
+|---|---|---|
+| `GET /account/bots` | — | `{ bots, max }` |
+| `POST /account/bots` | `{ username, displayName? }` | `{ bot, token }` |
+| `GET /account/bots/:id` | — | `{ bot, groups }` |
+| `PATCH /account/bots/:id` | campos do `PATCH /account/profile` + `public` | `{ bot }` |
+| `POST /account/bots/:id/token` | — | `{ token }` — as conexões do token antigo fecham com `4004` |
+| `DELETE /account/bots/:id` | — | `204` — `409` se o bot é dono de algum grupo |
 
 ### GET /users/:id
 
@@ -271,7 +292,32 @@ Corpo `{}`. O dono não pode sair (transfira ou apague o grupo antes).
 
 ### POST /groups/:id/join
 
-Corpo `{}`. Só grupos públicos. Mesmos erros de [aceitar convite](#post-invites-code-accept). Resposta: `{ groupId }`.
+Corpo `{}`. Só grupos públicos. Mesmos erros de [aceitar convite](#post-invites-code-accept). Resposta: `{ groupId }`. Um bot recebe `403` com `reason: "bot_self_join"` — veja [Colocando o bot num grupo](/guia/entrando-em-grupos).
+
+### POST /groups/:id/bots
+
+Corpo `{ botId }`. Adiciona um bot ao grupo. Exige a **sessão de uma pessoa** com `manageGroup` no grupo; um token de bot recebe `403`. Um bot privado só pode ser adicionado pelo dono dele. O bot recebe [`group-added`](./eventos#group-added). Resposta: `{ groupId }` (também se o bot já estava no grupo).
+
+| Status | Motivo |
+|---|---|
+| `403` | Sem `manageGroup`, bot privado, bot banido do grupo ou do GoLive, grupo cheio, bot já em 100 grupos. |
+| `404` | Grupo não encontrado (ou você não é membro), ou bot não encontrado. |
+| `423` | Grupo suspenso. |
+
+### GET /bots/:id
+
+Pública; a sessão (de pessoa) é opcional. Aceita o id ou o @usuário do bot.
+
+```js
+{
+  bot: { id, username, displayName, avatarUrl, bannerUrl, bio, flags, profileTheme, groupCount, createdAt },
+  public: true,       // qualquer pessoa que gerencia um grupo pode adicionar?
+  owner: false,       // quem pergunta é o dono?
+  canInstall: true,   // quem pergunta pode adicionar?
+  signedIn: true,
+  groups: [ { id, name, iconUrl, memberCount, member: false } ] // grupos que quem pergunta gerencia
+}
+```
 
 ---
 
@@ -440,11 +486,13 @@ Resposta: `{ invite: { code, createdBy, createdAt, expiresAt, maxUses, uses } }`
 
 ### POST /invites/:code/accept
 
-Corpo `{}`. Resposta: `{ groupId }` (também se o bot já for membro).
+Corpo `{}`. Resposta: `{ groupId }` (também se já for membro).
+
+**Bots não aceitam convites:** com um token de bot, a resposta é `403` com `reason: "bot_self_join"`, e nenhum uso do convite é gasto. Quem gerencia o grupo adiciona o bot por [`POST /groups/:id/bots`](#post-groups-id-bots).
 
 | Status | Motivo |
 |---|---|
-| `403` | Banido do grupo, grupo cheio, ou o bot já está em 100 grupos. |
+| `403` | Token de bot (`bot_self_join`), banido do grupo, grupo cheio, ou já em 100 grupos. |
 | `404` | Convite inválido. |
 | `410` | Expirado, revogado ou esgotado (`state` na resposta). |
 | `423` | Grupo suspenso. |
@@ -463,7 +511,7 @@ Corpo `{}`. Resposta: `{ groupId }` (também se o bot já for membro).
 | `replyTo` | `{ id, name, text?, kind?, images? }`. |
 | `clientId` | Um rótulo seu (1–64 `[A-Za-z0-9_-]`), devolvido no evento `dm`. |
 
-Resposta: `{ message }`. `404 User not found.` também quando há bloqueio entre as contas. Guia: [Mensagens diretas](/guia/mensagens-diretas).
+Resposta: `{ message }`. `404 User not found.` também quando há bloqueio entre as contas. Um bot só puxa conversa com quem divide um grupo com ele ou já escreveu para ele — senão `403` com `reason: "bot_dm_not_allowed"`. Guia: [Mensagens diretas](/guia/mensagens-diretas).
 
 `GET /dm/:userId` responde `{ user, messages, seenTs }` — `seenTs` é até quando a outra conta leu, ou `null` se um dos dois desligou as confirmações de leitura.
 

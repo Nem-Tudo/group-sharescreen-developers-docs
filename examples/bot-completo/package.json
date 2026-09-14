@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node --env-file=.env src/index.js",
-    "entrar": "node --env-file=.env scripts/entrar-no-grupo.js"
+    "link": "node --env-file=.env scripts/link-de-instalacao.js"
   },
   "dependencies": {
     "ws": "^8.18.0"

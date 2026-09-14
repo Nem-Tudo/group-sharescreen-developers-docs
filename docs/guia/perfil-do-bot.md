@@ -1,6 +1,10 @@
 # Perfil do bot
 
-O bot tem um perfil público como qualquer conta, em `golive.nemtudo.me/user/<usuario>`. A etiqueta **BOT** aparece sozinha ao lado do nome, em todo lugar.
+O bot tem um perfil público como qualquer conta, em `golive.nemtudo.me/user/<usuario>`. A etiqueta **BOT** aparece sozinha ao lado do nome, em todo lugar, e o perfil tem um botão **Adicionar a um grupo** (veja [Colocando o bot num grupo](./entrando-em-grupos)).
+
+Bots têm **todos os extras de perfil sem precisar de plano**: avatar da galeria, imagem própria (inclusive GIF animado), banner, fundo em degradê e música. O que um bot **não** ganha é o resto do Pro: nada de selo PRO, qualidade de transmissão maior ou temas aplicados em salas.
+
+O jeito mais fácil de editar é pela aba **Informações gerais** do [portal do desenvolvedor](https://golive-developers.nemtudo.me), com prévia ao vivo. O próprio bot também pode se editar pela API.
 
 ## Editando o perfil
 
@@ -10,11 +14,21 @@ O bot tem um perfil público como qualquer conta, em `golive.nemtudo.me/user/<us
 |---|---|
 | `displayName` | 1 a 24 caracteres. |
 | `bio` | Até 500 caracteres. `null` apaga. |
-| `avatar` | Um dos avatares padrão (veja abaixo). `null` volta ao padrão. |
+| `avatar` | Um avatar padrão ou da galeria (veja abaixo), ou uma imagem própria como *data URL*. `null` volta ao padrão. |
+| `banner` | Uma imagem como *data URL*. `null` remove. |
+| `profileTheme` | `{ from: "#4f46e5", to: "#9333ea", angle: 135 }` — o degradê do cartão. `angle` é 0, 45, 90, ..., 315. `null` remove. |
+| `song` | Link de um vídeo do YouTube que toca no perfil. `null` ou `""` remove. |
+| `songVolume` | 0 a 100. |
+
+Imagens: PNG, JPEG, WebP, GIF ou AVIF, até **5 MB**, no formato `data:image/png;base64,...`.
 
 ```js
+import { readFile } from "node:fs/promises";
+
 const API = "https://apigolive.nemtudo.me";
 const TOKEN = process.env.GOLIVE_TOKEN;
+
+const avatar = `data:image/png;base64,${(await readFile("avatar.png")).toString("base64")}`;
 
 const res = await fetch(`${API}/account/profile`, {
   method: "PATCH",
@@ -22,35 +36,35 @@ const res = await fetch(`${API}/account/profile`, {
   body: JSON.stringify({
     displayName: "DJ do Grupo",
     bio: "Eu toco as músicas e organizo as enquetes. Digite !ajuda 🎵",
+    avatar,
+    profileTheme: { from: "#4f46e5", to: "#9333ea", angle: 135 },
   }),
 });
 console.log(res.status, await res.json());
 ```
 
-## Avatar
+O dono do bot pode fazer a mesma coisa com a sessão dele, por <span class="http patch">PATCH</span> `/account/bots/:id` (veja [Criando seu bot](./criando-um-bot#pela-api-avancado)).
 
-Os avatares que uma conta pode usar dependem do plano dela, e um bot começa como uma conta gratuita. Para saber quais estão liberados:
+## Avatares prontos
 
-<span class="http get">GET</span> `/account/avatars`
+<span class="http get">GET</span> `/account/avatars` lista os avatares padrão e os da galeria. Para um bot, `canUseGallery` e `canUpload` vêm sempre `true`.
 
 ```js
 const avatars = await fetch(`${API}/account/avatars`, { headers: { Authorization: TOKEN } })
   .then((r) => r.json());
 // {
 //   defaults: ["/assets/default_avatars/01.png", "/assets/default_avatars/02.png"],
-//   gallery: [...],          // avatares da galeria
-//   canUseGallery: false,    // galeria é do plano Pro
-//   canUpload: false         // imagem própria é do plano Pro Max
+//   gallery: ["/assets/avatars/01.png", ...],
+//   canUseGallery: true,
+//   canUpload: true     // false só se o servidor não tiver envio de imagens configurado
 // }
 
 await fetch(`${API}/account/profile`, {
   method: "PATCH",
   headers: { Authorization: TOKEN, "Content-Type": "application/json" },
-  body: JSON.stringify({ avatar: avatars.defaults[1] }),
+  body: JSON.stringify({ avatar: avatars.gallery[3] }),
 });
 ```
-
-Quando a conta pode enviar imagem própria (`canUpload: true`), o `avatar` aceita também uma *data URL* (`data:image/png;base64,...`).
 
 ## Lendo perfis
 

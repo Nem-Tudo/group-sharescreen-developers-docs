@@ -13,6 +13,7 @@
 //   typing           ({ groupId, channelId, userId, name, typing })
 //   directMessage    (DirectMessage)         DM recebida (as enviadas pelo bot não)
 //   groupUpdate      ({ groupId })           algo mudou no grupo
+//   groupAdd         ({ groupId, addedBy })  alguém que gerencia um grupo adicionou o bot
 //   groupRemove      ({ groupId, reason })   o bot saiu/foi removido do grupo
 //   raw              (payload)               todo evento, como veio
 //   disconnect / reconnecting / error / debug
@@ -99,6 +100,9 @@ export class GoLiveClient extends EventEmitter {
       case "group-updated":
         this.#groups.delete(payload.groupId);
         this.emit("groupUpdate", payload);
+        break;
+      case "group-added":
+        this.emit("groupAdd", payload);
         break;
       case "group-removed":
         this.#groups.delete(payload.groupId);
@@ -256,10 +260,17 @@ export class GoLiveClient extends EventEmitter {
     return hasPermission(await this.fetchGroup(groupId), userId, key);
   }
 
-  /** Entra num grupo por um código de convite (ou link /invite/<código>). */
-  async acceptInvite(codeOrLink) {
-    const code = String(codeOrLink).trim().split("/").filter(Boolean).pop();
-    const { groupId } = await this.rest.post(`/invites/${code}/accept`);
-    return groupId;
+  /**
+   * O link para adicionar este bot a um grupo. Bot não entra em grupo sozinho
+   * (nem por convite): quem gerencia o grupo abre este link e escolhe onde.
+   */
+  installUrl(siteUrl = "https://golive.nemtudo.me") {
+    return `${siteUrl.replace(/\/+$/, "")}/bots/${this.user.id}/add`;
+  }
+
+  /** Sai de um grupo. */
+  async leaveGroup(groupId) {
+    await this.rest.post(`/groups/${groupId}/leave`);
+    this.#groups.delete(groupId);
   }
 }

@@ -18,7 +18,7 @@ O código fica em `examples/bot-completo` no repositório desta documentação, 
 cd examples/bot-completo
 npm install
 cp .env.example .env     # e cole o token do bot no .env
-npm run entrar -- https://golive.nemtudo.me/invite/SEU-CONVITE   # se o bot ainda não está num grupo
+npm run link    # mostra o link para quem gerencia o grupo adicionar o bot
 npm start
 ```
 
@@ -114,9 +114,11 @@ Junta HTTP e WebSocket, descobre quem reagiu (diff de reações) e expõe atalho
 
 :::
 
-### Script para entrar num grupo
+### Script com o link de instalação
 
-<<< @/../examples/bot-completo/scripts/entrar-no-grupo.js
+Bot não entra em grupo sozinho: quem gerencia o grupo abre este link e escolhe onde (veja [Colocando o bot num grupo](/guia/entrando-em-grupos)).
+
+<<< @/../examples/bot-completo/scripts/link-de-instalacao.js
 
 ## Criando o seu comando
 

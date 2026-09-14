@@ -2,6 +2,8 @@
 
 Documentação para quem cria bots para o GoLive — publicada em **https://developers-golive.nemtudo.me**.
 
+Os bots em si são criados e gerenciados no portal do desenvolvedor (**https://golive-developers.nemtudo.me**), que é outro repositório: `sharescreen-developers`.
+
 Feita com [VitePress](https://vitepress.dev). O site é estático: o build gera HTML puro em `docs/.vitepress/dist`.
 
 ## Rodando
@@ -55,4 +57,4 @@ O site usa URLs sem `.html` (`cleanUrls`). Na maioria das hospedagens (Vercel, N
 
 ## De onde vêm as informações
 
-Tudo aqui foi escrito a partir do código do servidor (`sharescreen-api/server`): `auth.ts` e `accountStore.ts` (tokens de bot), `accountRoutes.ts` (criação de bots), `groupRoutes.ts`/`groupStore.ts`/`groupPermissions.ts` (grupos, mensagens, reações, cargos), `dmRoutes.ts`, `socialRoutes.ts`, `signaling.ts` (WebSocket e salas ao vivo), `rateLimiter.ts` e `index.ts` (limites).
+Tudo aqui foi escrito a partir do código do servidor (`sharescreen-api/server`): `auth.ts` e `accountStore.ts` (tokens de bot), `accountRoutes.ts` (criação, exclusão e token dos bots), `signaling.ts` (`PATCH /account/bots/:id` e o captcha das salas), `entitlements.ts` (o que um bot ganha sem plano), `groupRoutes.ts`/`groupStore.ts`/`groupPermissions.ts` (grupos, mensagens, reações, cargos), `dmRoutes.ts`, `socialRoutes.ts`, `signaling.ts` (WebSocket e salas ao vivo), `rateLimiter.ts` e `index.ts` (limites).

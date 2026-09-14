@@ -1,79 +1,94 @@
 # Colocando o bot num grupo
 
-Um bot entra num grupo do mesmo jeito que uma pessoa: **por um convite** ou, se o grupo for público, **entrando direto**. A diferença é que quem "clica" é o seu código.
+Um bot **não entra em grupo sozinho** — nem por convite, nem num grupo público. Quem coloca o bot num grupo é uma **pessoa que gerencia o grupo**, como num servidor do Discord: ela abre o link do bot, escolhe o grupo e pronto.
 
-## 1. Crie um convite no grupo
+Isso existe para que um link de convite vazado não sirva para encher um grupo de bots, e para que todo bot num grupo esteja lá porque alguém do grupo quis.
 
-No grupo, quem tem permissão de criar convites (o dono, por padrão) gera um link de convite pela interface do GoLive. Ele tem esta cara:
+## 1. Pegue o link do bot
+
+No [portal do desenvolvedor](https://golive-developers.nemtudo.me), abra o bot e vá na aba **Instalação**. O link tem esta cara:
 
 ```
-https://golive.nemtudo.me/invite/AbC12345
+https://golive.nemtudo.me/bots/<id-do-bot>/add
 ```
 
-O que importa é o **código** do final: `AbC12345`. Grupos com link personalizado também servem (`/invite/meugrupo` → código `meugrupo`).
-
-::: tip Convite de uso único
-Para o bot, um convite que expira em 30 minutos e vale para 1 uso é o mais seguro — ninguém mais aproveita o link.
-:::
-
-## 2. Faça o bot aceitar o convite
-
-<span class="http post">POST</span> `/invites/:code/accept`
+Como o link só depende do id, o próprio bot consegue montá-lo:
 
 ```js
-const API = "https://apigolive.nemtudo.me";
-const TOKEN = process.env.GOLIVE_TOKEN;
-
-const res = await fetch(`${API}/invites/AbC12345/accept`, {
-  method: "POST",
-  headers: { Authorization: TOKEN, "Content-Type": "application/json" },
-  body: "{}",
-});
-const data = await res.json();
-if (!res.ok) throw new Error(data.error);
-console.log("Entrei no grupo", data.groupId);
+const { account } = await fetch(`${API}/auth/me`, { headers: { Authorization: TOKEN } }).then((r) => r.json());
+console.log(`Me adicione: https://golive.nemtudo.me/bots/${account.id}/add`);
 ```
 
-Se o bot já estiver no grupo, a resposta é a mesma (`{ groupId }`) e nenhum uso do convite é gasto.
+O perfil do bot no site (`golive.nemtudo.me/user/<usuario>`) também tem um botão **Adicionar a um grupo** que leva para a mesma página.
 
-Quer ver para onde o convite leva antes de aceitar? <span class="http get">GET</span> `/invites/:code` devolve o nome do grupo, quantos membros tem e se o bot já é membro:
+## 2. Quem gerencia o grupo adiciona
+
+A pessoa abre o link, entra na conta dela (se ainda não estiver), escolhe um dos grupos em que tem a permissão **Gerenciar grupo** (o dono e os administradores têm) e clica em **Adicionar ao grupo**.
+
+O bot recebe no WebSocket:
 
 ```js
-const preview = await fetch(`${API}/invites/AbC12345`, { headers: { Authorization: TOKEN } })
-  .then((r) => r.json());
-// { invite: { code, state: "ok", expiresAt }, group: { id, name, memberCount, ... }, member: false }
+{ type: "group-added", groupId: "k2x9d0a1b3", addedBy: "a41c..." } // addedBy: quem adicionou
 ```
 
-O [bot completo](/exemplos/bot-completo) tem um script pronto para isso:
+A partir daí ele é membro como qualquer outro. O [bot completo](/exemplos/bot-completo) avisa no terminal e, se ainda não estiver em nenhum grupo, mostra o próprio link ao iniciar. Tem também um script:
 
 ```bash
-npm run entrar -- https://golive.nemtudo.me/invite/AbC12345
+npm run link
+# 🤖 DJ do Grupo (@musica_bot)
+# ➕ Link para adicionar a um grupo: https://golive.nemtudo.me/bots/f3a9.../add
 ```
 
-### Erros ao aceitar
+### Bot público ou privado
+
+Na aba **Instalação** do portal:
+
+| | Quem pode adicionar pelo link |
+|---|---|
+| **Público** (padrão) | qualquer pessoa que gerencia um grupo |
+| **Privado** | só você, o dono do bot — nos grupos que você gerencia |
+
+Use **privado** para um bot feito só para os seus grupos.
+
+### Pela API
+
+A página do site usa duas rotas, que também servem para quem quer automatizar:
+
+<span class="http get">GET</span> `/bots/:idOuUsuario` — pública (a sessão é opcional). Devolve o bot, se ele é público, e — para uma pessoa logada — os grupos que ela gerencia, dizendo em quais o bot já está:
+
+```js
+{
+  bot: { id, username, displayName, avatarUrl, bannerUrl, bio, flags, groupCount, createdAt },
+  public: true,
+  owner: false,        // quem pergunta é o dono do bot?
+  canInstall: true,    // quem pergunta pode adicionar?
+  signedIn: true,
+  groups: [ { id, name, iconUrl, memberCount, member: false } ]
+}
+```
+
+<span class="http post">POST</span> `/groups/:id/bots` com `{ "botId": "..." }` — adiciona o bot. Exige o **token de sessão de uma pessoa** com **Gerenciar grupo** no grupo; um token de bot é recusado (um bot não adiciona outro).
 
 | Status | Significado |
 |---|---|
-| `404` | Convite não existe. |
-| `410` | Convite expirado, revogado ou esgotado (`state` diz qual). |
-| `403` | O bot foi banido do grupo, o grupo está cheio, ou o bot já está em 100 grupos. |
+| `403` | Sem a permissão "Gerenciar grupo", bot privado (e você não é o dono), bot banido do grupo ou do GoLive, grupo cheio, ou o bot já está em 100 grupos. |
+| `404` | Grupo não existe (ou você não é membro), ou bot não existe. |
 | `423` | O grupo foi suspenso pela administração do GoLive. |
 
-## Grupos públicos: entrando sem convite
+Se o bot já estiver no grupo, a resposta é a mesma (`{ groupId }`).
 
-Um grupo público pode ser acessado direto pelo id:
+## O que o bot *não* consegue fazer
 
-<span class="http post">POST</span> `/groups/:id/join`
+| Rota | Para um bot |
+|---|---|
+| <span class="http post">POST</span> `/invites/:code/accept` | `403`, `reason: "bot_self_join"` — sem gastar um uso do convite |
+| <span class="http post">POST</span> `/groups/:id/join` (grupo público) | `403`, `reason: "bot_self_join"` |
+| <span class="http post">POST</span> `/groups` (criar grupo) | `403` — bot não é dono de grupo |
+| <span class="http post">POST</span> `/groups/:id/transfer` para o bot | `400` — um grupo não pode ser passado para um bot |
 
-```js
-await fetch(`${API}/groups/k2x9d0a1b3/join`, {
-  method: "POST",
-  headers: { Authorization: TOKEN, "Content-Type": "application/json" },
-  body: "{}",
-});
-```
+Transformar uma sala ao vivo em grupo também não leva o bot junto: ele fica de fora até alguém adicioná-lo.
 
-Para achar grupos públicos: <span class="http get">GET</span> `/groups/search?q=nome`.
+`GET /invites/:code` continua funcionando — ele só mostra para onde um convite leva.
 
 ## 3. Dê um cargo ao bot
 
@@ -105,9 +120,11 @@ console.log(data.me.permissions.manage.kickMembers); // o bot pode expulsar?
 A URL de uma sala no site é `golive.nemtudo.me/groups/<groupId>/<channelId>`. Abra a sala e copie da barra de endereço.
 :::
 
+A aba **Instalação** do portal também lista os grupos em que o bot está.
+
 ## Saindo de um grupo
 
-<span class="http post">POST</span> `/groups/:id/leave` (corpo `{}`).
+<span class="http post">POST</span> `/groups/:id/leave` (corpo `{}`). Para voltar, alguém do grupo precisa adicionar o bot de novo.
 
 ## Sendo removido
 
@@ -130,4 +147,4 @@ Esse evento não diz *o que* mudou — se o seu bot guarda dados do grupo em cac
 | | |
 |---|---|
 | Grupos por conta (bot incluso) | 100 |
-| Convites ativos por grupo | 50 |
+| Adicionar bot (`POST /groups/:id/bots`) | 20 por minuto |

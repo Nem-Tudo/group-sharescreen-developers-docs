@@ -18,8 +18,10 @@ import { toCredential } from "./rest.js";
 
 export const DEFAULT_GATEWAY_URL = "wss://apigolive.nemtudo.me/ws";
 
-// Código de fechamento de uma conexão banida: não adianta reconectar.
+// Códigos de fechamento em que não adianta reconectar: a conexão foi banida,
+// ou o token deixou de valer (trocaram o token no portal, ou o bot foi excluído).
 const BANNED_CLOSE_CODE = 4003;
+const TOKEN_REVOKED_CLOSE_CODE = 4004;
 // O servidor pinga a cada 25s. Sem ouvir nada por 60s, a conexão morreu.
 const SILENCE_TIMEOUT_MS = 60_000;
 const MAX_RECONNECT_DELAY_MS = 30_000;
@@ -67,6 +69,14 @@ export class Gateway extends EventEmitter {
       if (this.#stopped) return;
       if (code === BANNED_CLOSE_CODE) {
         this.emit("error", new Error("A conexão foi recusada: esta conta ou IP está banido."));
+        return;
+      }
+      if (code === TOKEN_REVOKED_CLOSE_CODE) {
+        this.#stopped = true;
+        this.emit(
+          "error",
+          new Error("O token deste bot foi trocado ou o bot foi excluído. Pegue o token novo no portal do desenvolvedor.")
+        );
         return;
       }
       this.#scheduleReconnect();

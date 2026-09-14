@@ -32,6 +32,7 @@ export default defineConfig({
       { text: "Guia", link: "/guia/introducao", activeMatch: "/guia/" },
       { text: "Referência", link: "/referencia/rest", activeMatch: "/referencia/" },
       { text: "Exemplos", link: "/exemplos/bot-completo", activeMatch: "/exemplos/" },
+      { text: "Portal do desenvolvedor", link: "https://golive-developers.nemtudo.me" },
       { text: "Abrir o GoLive", link: "https://golive.nemtudo.me" },
     ],
 

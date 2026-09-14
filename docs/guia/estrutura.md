@@ -9,7 +9,7 @@ bot-completo/
 ├─ .env                    ← o token (fora do Git)
 ├─ package.json
 ├─ scripts/
-│  └─ entrar-no-grupo.js   ← aceita um convite
+│  └─ link-de-instalacao.js ← mostra o link para adicionar o bot a um grupo
 └─ src/
    ├─ index.js             ← liga tudo: cliente, comandos, eventos
    ├─ golive/              ← falar com o GoLive (reutilizável em qualquer bot)
@@ -52,6 +52,7 @@ O `GoLiveClient` transforma os eventos crus em eventos prontos para usar:
 | `reactionUpdate` | `group-message-reactions` | o estado completo |
 | `typing` | `group-typing` | quem está digitando |
 | `directMessage` | `dm` (só as recebidas) | um `DirectMessage` com `.reply()` |
+| `groupAdd` | `group-added` | `{ groupId, addedBy }` — alguém adicionou o bot a um grupo |
 | `groupUpdate` / `groupRemove` | `group-updated` / `group-removed` | o grupo (e o motivo) |
 | `raw` | tudo | o evento como veio |
 

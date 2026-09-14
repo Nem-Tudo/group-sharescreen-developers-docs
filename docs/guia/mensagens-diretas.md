@@ -1,6 +1,13 @@
 # Mensagens diretas (DM)
 
-Um bot pode conversar em particular com qualquer conta do GoLive — não precisa ser amigo. Só não consegue falar com convidados (quem não tem conta) nem com quem bloqueou o bot.
+Um bot conversa em particular com contas do GoLive — não precisa ser amigo. Mas, diferente de uma pessoa, **um bot só puxa conversa** com:
+
+- quem **divide um grupo** com o bot, ou
+- quem **já mandou uma DM** para o bot antes.
+
+Para qualquer outra conta, a API responde `403` com `reason: "bot_dm_not_allowed"`. É o que impede um bot de mandar mensagem para o site inteiro num loop. Responder a quem escreveu primeiro sempre funciona.
+
+O bot também não consegue falar com convidados (quem não tem conta) nem com quem bloqueou o bot.
 
 ## Enviando uma DM
 
@@ -208,6 +215,7 @@ Tudo que o bot enviou até `ts` foi lido. Só chega se **os dois lados** compart
 |---|---|
 | `404 User not found.` | A conta não existe **ou** um dos dois bloqueou o outro (a API dá a mesma resposta de propósito). |
 | `400 You cannot message yourself.` | O bot tentou mandar DM para si mesmo. |
+| `403` `bot_dm_not_allowed` | A pessoa não divide nenhum grupo com o bot e nunca escreveu para ele. |
 | `400 Empty message.` | Faltou `text`, `images` ou `url`. |
 | `400 Invalid emoji.` | A reação não é exatamente um emoji padrão. |
 | `404 Message not found.` | A mensagem não existe, não é dessa conversa, ou há bloqueio. |
