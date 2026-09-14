@@ -145,7 +145,8 @@ https://apigolive.nemtudo.me
 | Método | Rota | O que faz | Limite |
 |---|---|---|---|
 | <span class="http get">GET</span> | `/stats` | `{ peopleOnline }` nas salas ao vivo. **Pública.** | 60 |
-| <span class="http get">GET</span> | `/rooms` | Salas ao vivo públicas agora. **Pública.** | 60 |
+| <span class="http get">GET</span> | `/rooms` | Salas ao vivo públicas agora (`rooms`), e as chamadas abertas de grupos públicos com gente (`groupRooms`, cada uma com `group` e `channel` — entra-se nelas pelo grupo, não pelo `handle`). **Pública.** | 60 |
+| <span class="http get">GET</span> | `/groups/public` | Grupos públicos, paginados: `?q=` busca, `sort=online\|members\|recent`, `offset`, `limit` (até 60). Responde `{ groups, total, hasMore }`. **Pública.** | 120 |
 | <span class="http get">GET</span> | `/rooms/:handle/exists` | Se uma sala ao vivo existe. **Pública.** | 60 |
 | <span class="http get">GET</span> | `/presence?ids=a,b,c` | Presença de até 400 contas. **Pública.** | 120 |
 | <span class="http get">GET</span> | `/health` | Se a API está no ar. **Pública.** | sem limite |

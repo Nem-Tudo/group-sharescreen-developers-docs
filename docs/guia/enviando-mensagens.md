@@ -78,6 +78,8 @@ O id é o `author.id` de uma mensagem, o `id` de um membro em `GET /groups/:id/m
 
 Para a menção notificar, o bot precisa da permissão `mentionMembers` na sala (o padrão é ter) e a pessoa precisa conseguir ver a sala. Sem a permissão, a mensagem vai do mesmo jeito — só não notifica ninguém.
 
+Mencionar a si mesmo também vale: o id do autor fica em `mentions` e a menção aparece destacada, mas **quem envia nunca é notificado** pela própria mensagem — nem por `<@id>`, nem por `@everyone`, cargo ou combinação.
+
 ### Apontar para uma sala: `<#id>`
 
 `<#q7w3e5r9t1y2>` aparece como um link `#nome-da-sala`.
