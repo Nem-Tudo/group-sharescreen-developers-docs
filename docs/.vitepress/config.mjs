@@ -66,6 +66,7 @@ export default defineConfig({
             { text: "Páginas por reação", link: "/guia/paginas-por-reacao" },
             { text: "Permissões e cargos", link: "/guia/permissoes" },
             { text: "Moderação", link: "/guia/moderacao" },
+            { text: "Webhooks", link: "/guia/webhooks" },
             { text: "Organizando um bot grande", link: "/guia/estrutura" },
             { text: "Salas ao vivo (experimental)", link: "/guia/salas-ao-vivo" },
           ],

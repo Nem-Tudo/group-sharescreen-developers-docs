@@ -31,8 +31,9 @@ await sendMessage("k2x9d0a1b3", "q7w3e5r9t1y2", { text: "Olá, grupo! 👋" });
 | `replyTo` | objeto | A mensagem que está sendo respondida. Veja [Respondendo mensagens](./respondendo-mensagens). |
 | `mentions` | string[] | Para mencionar `@everyone`, `@online`, `@offline`, cargos ou uma combinação deles (veja abaixo). |
 | `nonce` | string | Um identificador seu para a mensagem (8 a 64 caracteres `A-Z a-z 0-9 _ -`). Evita duplicar ao tentar de novo. |
+| `embeds` | objeto[] | Até **10** cartões ricos, no formato do Discord. Veja [Embeds](#embeds). |
 
-Uma mensagem precisa de pelo menos um entre `text`, `images`, `url` e `attachments`. Com imagens ou arquivos, o `text` vira a legenda.
+Uma mensagem precisa de pelo menos um entre `text`, `images`, `url`, `attachments` e `embeds`. Com imagens ou arquivos, o `text` vira a legenda.
 
 A resposta:
 
@@ -56,11 +57,74 @@ A mensagem também chega pelo WebSocket como `group-message` — para todo mundo
 
 ## Formatação
 
-O texto é mostrado **como está**: não há markdown (`**negrito**` aparece com os asteriscos). O que o GoLive transforma:
+O texto aceita o **markdown do Discord**:
 
-- **Links** (`https://...` e `www....`) viram clicáveis.
-- **Emoji** aparecem normalmente — use à vontade.
-- **Menções** e **salas**, com os tokens abaixo.
+| Você escreve | Aparece como |
+|---|---|
+| `**negrito**` | **negrito** |
+| `*itálico*` ou `_itálico_` | *itálico* |
+| `__sublinhado__` | sublinhado |
+| `~~riscado~~` | ~~riscado~~ |
+| `\|\|spoiler\|\|` | escondido até alguém clicar |
+| `` `código` `` | `código` |
+| ` ```js ` + código + ` ``` ` | um bloco de código, com cores para a linguagem |
+| `# Título`, `## Título`, `### Título` | títulos (no começo da linha) |
+| `-# texto` | texto pequeno e cinza |
+| `> citação` | uma linha citada; `>>> ` cita tudo até o fim |
+| `- item` ou `1. item` | listas |
+| `[texto](https://link)` | um link com outro texto |
+
+- Para mostrar um caractere de formatação como ele é, escape com `\`: `\*não é itálico\*`.
+- `_` no meio de uma palavra não vira itálico (`nome_de_usuario` fica como está), e nada dentro de um link ou de um token `<@id>`/`<#id>` é formatação.
+- **Links** (`https://...` e `www....`) viram clicáveis. **Emoji** aparecem normalmente. **Menções** e **salas** usam os tokens abaixo — e funcionam dentro da formatação (`**<@id>**`).
+- Nos blocos de código, as linguagens com cor são js/ts, python, java, c/c++, c#, go, rust, kotlin, swift, php, ruby, shell, sql, lua, css, html/xml, json, yaml e `diff`. Outras aparecem sem cor.
+
+## Embeds
+
+Bots (e [webhooks](./webhooks)) podem mandar **embeds**: cartões com uma barra colorida, título, descrição, campos, imagens e rodapé. O formato é o do Discord, então um embed montado para lá funciona aqui sem mudanças. Pessoas não mandam embeds.
+
+```js
+await sendMessage(groupId, channelId, {
+  text: "Novo vídeo no canal!",
+  embeds: [
+    {
+      title: "Como fazer um bot em 10 minutos",
+      url: "https://example.com/video",
+      description: "Um passo a passo **do zero** até o primeiro comando.",
+      color: 0x5865f2,
+      author: { name: "GoLive Dev", icon_url: "https://example.com/logo.png" },
+      fields: [
+        { name: "Duração", value: "10:32", inline: true },
+        { name: "Nível", value: "Iniciante", inline: true },
+      ],
+      thumbnail: { url: "https://example.com/thumb.png" },
+      image: { url: "https://example.com/capa.png" },
+      footer: { text: "Publicado automaticamente" },
+      timestamp: new Date().toISOString(),
+    },
+  ],
+});
+```
+
+| Campo | Limite |
+|---|---|
+| `title` | 256 caracteres |
+| `description` | 4096 caracteres, com markdown |
+| `url` | link do título, `http(s)` |
+| `color` | número de `0x000000` a `0xffffff` |
+| `author` | `{ name, url?, icon_url? }` — nome até 256 |
+| `fields` | até 25, `{ name, value, inline? }` — nome até 256, valor até 1024 (com markdown) |
+| `image`, `thumbnail` | `{ url }`, **só `https`** |
+| `footer` | `{ text, icon_url? }` — texto até 2048 |
+| `timestamp` | data ISO 8601, mostrada no rodapé |
+
+Até **10** embeds por mensagem e **6000** caracteres somando o texto de todos. O que passar do limite é cortado; o que estiver fora do formato (um link `javascript:`, uma imagem `http://`) é descartado. Um embed que fica vazio some. Uma mensagem pode ser só embeds, sem `text`.
+
+A mensagem volta com `embeds` no formato do GoLive (camelCase: `iconUrl`, e `image`/`thumbnail` como a própria URL) — veja [Embed](/referencia/objetos#embed).
+
+::: tip Imagens
+As imagens dos embeds são carregadas direto de onde apontam (não passam pela CDN do GoLive). Use um endereço `https` estável.
+:::
 
 ## Menções
 

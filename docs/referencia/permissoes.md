@@ -17,6 +17,7 @@ Valem para o grupo todo; nenhuma sala sobrescreve.
 | `manageMessages` | Gerenciar mensagens | Apagar mensagens dos outros. | ❌ |
 | `manageReactions` | Gerenciar reações | Tirar a reação dos outros de uma mensagem. | ❌ |
 | `createInvites` | Criar convites | Criar convites e revogar os seus. | ❌ |
+| `manageWebhooks` | Gerenciar webhooks | Criar, editar e apagar os [webhooks](/guia/webhooks) das salas que vê, e ver os endereços deles. | ❌ |
 
 ## Geral (`general`)
 

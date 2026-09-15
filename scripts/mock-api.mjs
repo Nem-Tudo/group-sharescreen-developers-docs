@@ -70,12 +70,28 @@ export function createMockApi({ botToken }) {
     return reactions.length ? { ...rest, reactions } : rest;
   }
 
+  // O formato que a API devolve (veja docs/referencia/objetos.md#embed), sem os limites dela.
+  function mockEmbed(e) {
+    const pic = (v) => (typeof v === "string" ? v : v?.url);
+    const out = {
+      title: e.title, description: e.description, url: e.url, color: e.color, timestamp: e.timestamp,
+      author: e.author ? { name: e.author.name, url: e.author.url, iconUrl: e.author.icon_url ?? e.author.iconUrl } : undefined,
+      footer: e.footer ? { text: e.footer.text, iconUrl: e.footer.icon_url ?? e.footer.iconUrl } : undefined,
+      fields: Array.isArray(e.fields) ? e.fields.map((f) => ({ name: f.name, value: f.value, inline: Boolean(f.inline) })) : undefined,
+      image: pic(e.image), thumbnail: pic(e.thumbnail),
+    };
+    return JSON.parse(JSON.stringify(out));
+  }
+
   function createMessage(from, body) {
     const author = groupUser(from);
     const m = {
       id: randomUUID(), groupId: group.id, channelId: channel.id, from, fromName: author.name,
       text: String(body.text ?? "").trim().slice(0, 2000), kind: "text",
-      ...(body.replyTo ? { replyTo: body.replyTo } : {}), ts: Date.now(), reactions: new Map(),
+      ...(body.replyTo ? { replyTo: body.replyTo } : {}),
+      // Só bots mandam embeds; a API de verdade valida e converte (icon_url → iconUrl, image: { url } → image).
+      ...(author.bot && Array.isArray(body.embeds) && body.embeds.length ? { embeds: body.embeds.slice(0, 10).map(mockEmbed) } : {}),
+      ts: Date.now(), reactions: new Map(),
     };
     messages.set(m.id, m);
     const message = publicMessage(m);
@@ -124,7 +140,7 @@ export function createMockApi({ botToken }) {
       return { messages: page, authors: {} };
     }],
     ["POST", /^\/groups\/grp1\/channels\/chan1\/messages$/, (me, _p, body) => {
-      if (!body.text && !body.url && !body.images?.length) return [400, { error: "Empty message." }];
+      if (!body.text && !body.url && !body.images?.length && !body.embeds?.length) return [400, { error: "Empty message." }];
       return createMessage(me, body);
     }],
     ["PATCH", /^\/groups\/grp1\/channels\/chan1\/messages\/([^/]+)$/, (me, [mid], body) => {
@@ -134,7 +150,7 @@ export function createMockApi({ botToken }) {
       if (m.kind === "gif") return [400, { error: "A GIF cannot be edited." }];
       if (typeof body.text !== "string") return [400, { error: "Missing text." }];
       const text = body.text.trim().slice(0, 2000);
-      if (!text && !m.images?.length) return [400, { error: "Empty message." }];
+      if (!text && !m.images?.length && !m.embeds?.length) return [400, { error: "Empty message." }];
       if (text === m.text) return { message: publicMessage(m) };
       m.text = text;
       m.editedAt = Date.now();

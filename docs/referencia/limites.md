@@ -35,6 +35,7 @@ Contados **por IP**, em janelas fixas. Vários bots no mesmo servidor dividem o 
 | `GET /users/:id` | 60 / min |
 | Rotas `/social/*` (escrita) | 30 / min |
 | `GET /presence` | 120 / min |
+| `POST /webhooks/:id/:token` | 120 / min por IP, e **5 a cada 2 s por webhook** (resposta no formato do Discord, com `retry_after`) |
 
 ## Limites do WebSocket
 
@@ -58,6 +59,8 @@ Estourar os limites do WebSocket (`register`, `join` e `chat`) **6 vezes em 60 s
 |---|---|
 | Texto de mensagem (grupo ou DM) | 2000 caracteres |
 | Texto no chat de sala ao vivo | 500 caracteres |
+| Embeds por mensagem | 10, com até 6000 caracteres somados ([detalhes](/guia/enviando-mensagens#embeds)) |
+| Webhooks por sala | 15 |
 | Imagens por mensagem | 3 |
 | Tamanho de uma imagem | 5 MB |
 | Imagens somadas numa mensagem | 8 MB |

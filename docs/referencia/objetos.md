@@ -53,6 +53,7 @@ Uma pessoa como aparece dentro de um grupo (`author` das mensagens, lista de mem
   flags: string[]
   bot: boolean
   guest: boolean
+  webhook?: true              // só no autor de uma mensagem de webhook — id "webhook:<id>", sem conta por trás
 }
 ```
 
@@ -86,6 +87,29 @@ Na lista de membros (`GET /groups/:id/members`) ganha também:
   reactions?: Reaction[]      // ausente sem reações
   ts: number                  // quando foi enviada (não muda ao editar)
   editedAt?: number           // última edição; ausente se nunca foi editada
+  embeds?: Embed[]            // de bots e webhooks; ausente sem embeds
+  webhook?: { id: string, avatarUrl: string | null }  // quando um webhook postou; `from` é "webhook:<id>"
+}
+```
+
+O `text` é o que foi escrito, com o [markdown](/guia/enviando-mensagens#formatacao) e os tokens `<@id>`/`<#id>` como estão.
+
+## Embed
+
+Como a API devolve um embed. O envio aceita o formato do Discord (`icon_url`, `image: { url }`); veja [Embeds](/guia/enviando-mensagens#embeds).
+
+```ts
+{
+  title?: string
+  description?: string        // com markdown
+  url?: string                // link do título
+  color?: number              // 0xRRGGBB
+  author?: { name: string, url?: string, iconUrl?: string }
+  footer?: { text: string, iconUrl?: string }
+  timestamp?: string          // ISO 8601
+  fields?: { name: string, value: string, inline: boolean }[]
+  image?: string              // https
+  thumbnail?: string          // https
 }
 ```
 

@@ -82,6 +82,19 @@ https://apigolive.nemtudo.me
 | <span class="http post">POST</span> | [`/groups/:id/channels/:cid/typing`](#post-groups-id-channels-cid-typing) | "Está digitando...". | `sendMessages` | 120 |
 | <span class="http post">POST</span> | `/groups/:id/channels/:cid/read` | Marca a sala como lida. | ver a sala | 240 |
 
+### Webhooks
+
+| Método | Rota | O que faz | Permissão | Limite |
+|---|---|---|---|---|
+| <span class="http get">GET</span> | `/groups/:id/webhooks` | Lista os webhooks. | `manageWebhooks` | 120 |
+| <span class="http post">POST</span> | `/groups/:id/channels/:cid/webhooks` | Cria (`{ name }`). | `manageWebhooks` | 20 |
+| <span class="http patch">PATCH</span> | `/groups/:id/webhooks/:wid` | Renomeia ou move (`{ name?, channelId? }`). | `manageWebhooks` | 60 |
+| <span class="http post">POST</span> | `/groups/:id/webhooks/:wid/avatar` | Troca a foto (`{ image: dataURL }`). | `manageWebhooks` | 10 |
+| <span class="http delete">DELETE</span> | `/groups/:id/webhooks/:wid/avatar` | Tira a foto. | `manageWebhooks` | 30 |
+| <span class="http post">POST</span> | `/groups/:id/webhooks/:wid/token` | Gera um novo endereço. | `manageWebhooks` | 20 |
+| <span class="http delete">DELETE</span> | `/groups/:id/webhooks/:wid` | Apaga. | `manageWebhooks` | 30 |
+| <span class="http post">POST</span> | [`/webhooks/:id/:token`](/guia/webhooks#postando) | Posta pelo webhook. **Sem autenticação.** | — | 5 / 2 s por webhook |
+
 ### Membros e moderação
 
 | Método | Rota | O que faz | Permissão | Limite |
@@ -371,8 +384,9 @@ Numa mensagem com `@online`, `@offline` ou `@expr:` em `mentions`, vem também `
 | `replyTo` | objeto | `{ id, name, text?, kind?, images?, userId? }`. `userId` notifica o autor. |
 | `mentions` | string[] | `"@everyone"` (exige `mentionEveryone`), `"@role:<id>"`, `"@online"`, `"@offline"` e `"@expr:<expressão>"` ([combinações](/guia/enviando-mensagens#online-offline-e-combinacoes)). Pessoas vão no texto como `<@id>`. |
 | `nonce` | string | 8–64 caracteres `[A-Za-z0-9_-]`. Repetir com o mesmo nonce em até 10 min devolve a mensagem já criada. |
+| `embeds` | objeto[] | Até 10 [embeds](/guia/enviando-mensagens#embeds) no formato do Discord. Só bots. |
 
-Pelo menos um de `text`, `images`, `url`. Resposta: `{ message, author, nonce? }`. Guia: [Enviando mensagens](/guia/enviando-mensagens).
+Pelo menos um de `text`, `images`, `url`, `attachments`, `embeds`. O `text` aceita [markdown](/guia/enviando-mensagens#formatacao). Resposta: `{ message, author, nonce? }`. Guia: [Enviando mensagens](/guia/enviando-mensagens).
 
 ### PATCH /groups/:id/channels/:cid/messages/:mid
 
