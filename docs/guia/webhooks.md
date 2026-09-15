@@ -107,9 +107,20 @@ await fetch(process.env.GOLIVE_WEBHOOK, {
 | Campo | Tipo | Descrição |
 |---|---|---|
 | `name` | string | O novo nome do webhook. |
-| `avatar` | string \| null | A nova foto, como [data URL](https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes/data). `null` tira a foto atual. |
+| `avatar` | string \| null | A nova foto. Uma [data URL](https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes/data) é enviada como uma foto nova; uma URL `https://` é usada como está, sem subir nada — útil pra reaproveitar uma foto de uma resposta anterior deste mesmo `PATCH` em vez de subir a mesma imagem de novo a cada troca. `null` tira a foto atual. |
 
-Os dois campos são opcionais — manda só o que quiser trocar. A resposta é `200` com `{ id, name, avatar, channel_id }`. Trocar a sala do webhook e gerar um novo endereço continuam exigindo `manageWebhooks` e login (veja a próxima seção), porque envolvem escolher uma sala do grupo ou revelar o novo endereço a alguém.
+Os dois campos são opcionais — manda só o que quiser trocar. A resposta é `200` com `{ id, name, avatar, channel_id }` — guarde o `avatar` da resposta se for trocar de volta pra essa foto depois. Trocar a sala do webhook e gerar um novo endereço continuam exigindo `manageWebhooks` e login (veja a próxima seção), porque envolvem escolher uma sala do grupo ou revelar o novo endereço a alguém.
+
+```js
+// Um bot que alterna a foto do webhook entre um punhado de pessoas conhecidas
+// guarda a URL que cada PATCH devolveu, e reusa em vez de subir de novo:
+const cached = photosByUser.get(userId);
+await fetch(process.env.GOLIVE_WEBHOOK, {
+  method: "PATCH",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ avatar: cached ?? await toDataUrl(user.avatarUrl) }),
+});
+```
 
 ## Gerenciando pela API
 
