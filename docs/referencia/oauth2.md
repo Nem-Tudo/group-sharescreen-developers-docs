@@ -246,7 +246,8 @@ Escopo: `openid`. Os mesmos fatos do [`GET /users/@me`](#get-users-me), com os n
 
 | Variável | Para quê |
 |---|---|
-| `OIDC_ISSUER` | O `iss` dos tokens e o endereço da descoberta. Padrão: a primeira entrada de `WEB_ORIGINS` (o site), que é quase sempre o que se quer. |
+| `OIDC_SITE_URL` | O endereço público do site: tela de consentimento e issuer padrão. Sem ela, a primeira origem **https e fora de localhost** de `WEB_ORIGINS` — não a primeira entrada da lista, que costuma ser `localhost`. |
+| `OIDC_ISSUER` | O `iss` dos tokens e o endereço da descoberta, se precisar ser diferente do site. Padrão: o mesmo valor acima. |
 | `OIDC_API_BASE` | Onde a API responde, para as URLs de endpoint dentro do documento. Derivado da requisição quando não definido; `OAUTH_CALLBACK_BASE` também serve. |
 | `OIDC_PRIVATE_KEY` | A chave RSA de assinatura, em PEM PKCS#8. Sem ela, uma chave é gerada e guardada no MongoDB — e, sem MongoDB, gerada por processo, o que só serve para desenvolvimento com um worker só. |
 
