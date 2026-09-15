@@ -40,7 +40,7 @@ await fetch(process.env.GOLIVE_WEBHOOK, {
 
 A mensagem precisa de `content` ou de `embeds`. A resposta é `204` sem corpo. Com `?wait=true`, é `200` com a mensagem no formato do Discord (`id`, `content`, `channel_id`, `webhook_id`, `timestamp`, `author`).
 
-Não são aceitos: `avatar_url` (a foto é sempre a do webhook), arquivos, menções (um webhook não notifica ninguém pelo nome) e threads.
+Não são aceitos nesta rota: `avatar_url` (nas mensagens a foto é sempre a atual do webhook — para trocá-la, veja a seção abaixo), arquivos, menções (um webhook não notifica ninguém pelo nome) e threads.
 
 ### Salas de voz
 
@@ -69,6 +69,30 @@ Para um bot ignorar webhooks:
 ```js
 if (author.webhook) return;
 ```
+
+## Trocando o nome e a foto pelo próprio endereço
+
+Quem só tem o endereço do webhook — sem login no grupo — ainda pode trocar o nome e a foto que ele usa. É o mesmo endereço que posta mensagens, só que com `PATCH` em vez de `POST`:
+
+<span class="http patch">PATCH</span> `/webhooks/:id/:token`
+
+```js
+await fetch(process.env.GOLIVE_WEBHOOK, {
+  method: "PATCH",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    name: "Deploy Bot",
+    avatar: "data:image/png;base64,...", // ou null para tirar a foto
+  }),
+});
+```
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `name` | string | O novo nome do webhook. |
+| `avatar` | string \| null | A nova foto, como [data URL](https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes/data). `null` tira a foto atual. |
+
+Os dois campos são opcionais — manda só o que quiser trocar. A resposta é `200` com `{ id, name, avatar, channel_id }`. Trocar a sala do webhook e gerar um novo endereço continuam exigindo `manageWebhooks` e login (veja a próxima seção), porque envolvem escolher uma sala do grupo ou revelar o novo endereço a alguém.
 
 ## Gerenciando pela API
 
