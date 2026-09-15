@@ -67,3 +67,6 @@ Só para salas de voz. Bots não entram em chamadas; listadas para quem gerencia
 | Expulsar/banir/dar cargo a alguém | Precisa ter cargo **acima** do da pessoa. Ninguém age sobre o dono. |
 | Editar/apagar/reordenar um cargo | Só cargos **abaixo** do seu. |
 | Ligar uma permissão num cargo | Só permissões que você mesmo tem (administradores podem todas). |
+| Cargo de bot (`managedBy`) | Editável como os outros; nunca dado a outra pessoa, tirado do bot ou apagado. Some quando o bot sai. |
+
+O valor de cada permissão no bitfield do `?permissions=` está em [Colocando o bot num grupo](/guia/entrando-em-grupos#o-bitfield).

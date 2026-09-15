@@ -97,6 +97,14 @@ if (rankOf(data, targetId) >= rankOf(data, message.author.id)) {
 `GET /groups/:id` é chamado a cada comando de moderação. Guarde a resposta por um minuto e jogue fora quando chegar `{ type: "group-updated", groupId }` — é o que o `GoLiveClient.fetchGroup` do [bot completo](/exemplos/bot-completo) faz.
 :::
 
+## O cargo do próprio bot
+
+Todo bot ganha, ao entrar num grupo, um cargo com o nome dele e as permissões autorizadas por quem o adicionou (veja [Colocando o bot num grupo](./entrando-em-grupos#_3-permissoes-ao-entrar)). Ele vem com `managedBy` igual ao id do bot. Esse cargo pode ser editado e reordenado, mas não pode ser dado a outra pessoa, tirado do bot ou apagado — e some quando o bot sai.
+
+```js
+const myRole = data.roles.find((r) => r.managedBy === BOT_ID);
+```
+
 ## Gerenciando cargos pelo bot
 
 Com `manageRoles`, o bot cria, edita e distribui cargos — sempre abaixo do próprio cargo, e só ligando permissões que ele mesmo tem.
@@ -121,6 +129,8 @@ const { role } = await api("POST", `/groups/${groupId}/roles`, {
 
 ::: warning `PUT .../roles` substitui a lista inteira
 Mande **todos** os cargos que a pessoa deve ter, não só o novo. Leia os atuais em `memberRoles[userId]`, adicione ou remova, e envie. Cargos acima do bot ficam como estavam, independentemente do que for enviado.
+
+Um cargo com `managedBy` não entra nessa conta: mandá-lo para outra pessoa, ou tirá-lo do próprio bot, dá `403`. `DELETE` num cargo desses também dá `403`.
 :::
 
 ## Permissões por sala

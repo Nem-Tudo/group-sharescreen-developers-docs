@@ -125,6 +125,16 @@ export function createMockApi({ botToken }) {
       if (!accounts.get(body.botId)?.bot) return [404, { error: "Bot not found." }];
       if (!members.has(body.botId)) {
         members.add(body.botId);
+        // O cargo próprio do bot (managedBy), como a API cria.
+        const bits = Number.isInteger(body.permissions) ? body.permissions : 0;
+        const roleId = `bot-${body.botId}`;
+        group.roles = group.roles.filter((r) => r.managedBy !== body.botId);
+        group.roles.push({
+          id: roleId, name: accounts.get(body.botId).displayName, color: null, position: group.roles.length + 1,
+          hoist: false, mentionable: false, managedBy: body.botId,
+          permissions: { manage: { ...OFF(MANAGE), kickMembers: Boolean(bits & 16), manageMessages: Boolean(bits & 64) }, general: {}, text: {}, voice: {} },
+        });
+        memberRoles[body.botId] = [roleId];
         send(body.botId, { type: "group-added", groupId: group.id, addedBy: me });
         tellMembers({ type: "group-updated", groupId: group.id });
       }

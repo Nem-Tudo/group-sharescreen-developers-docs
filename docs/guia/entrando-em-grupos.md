@@ -6,11 +6,14 @@ Isso existe para que um link de convite vazado não sirva para encher um grupo d
 
 ## 1. Pegue o link do bot
 
-No [portal do desenvolvedor](https://golive-developers.nemtudo.me), abra o bot e vá na aba **Instalação**. O link tem esta cara:
+No [portal do desenvolvedor](https://golive.nemtudo.me/developers), abra o bot e vá na aba **Instalação**. O link tem esta cara:
 
 ```
 https://golive.nemtudo.me/bots/<id-do-bot>/add
+https://golive.nemtudo.me/bots/<id-do-bot>/add?permissions=6160
 ```
+
+Como no Discord, o `?permissions=` diz quais [permissões](#_3-permissoes-ao-entrar) o bot pede. Sem ele, valem as **permissões padrão** que você marcou na aba Instalação.
 
 Como o link só depende do id, o próprio bot consegue montá-lo:
 
@@ -23,7 +26,7 @@ O perfil do bot no site (`golive.nemtudo.me/user/<usuario>`) também tem um bot�
 
 ## 2. Quem gerencia o grupo adiciona
 
-A pessoa abre o link, entra na conta dela (se ainda não estiver), escolhe um dos grupos em que tem a permissão **Gerenciar grupo** (o dono e os administradores têm) e clica em **Adicionar ao grupo**.
+A pessoa abre o link, entra na conta dela (se ainda não estiver), escolhe um dos grupos em que tem a permissão **Gerenciar grupo** (o dono e os administradores têm) e clica em **Continuar**. Aparece a lista das permissões que o bot pede; ela pode desmarcar qualquer uma e clica em **Autorizar**.
 
 O bot recebe no WebSocket:
 
@@ -63,14 +66,18 @@ A página do site usa duas rotas, que também servem para quem quer automatizar:
   owner: false,        // quem pergunta é o dono do bot?
   canInstall: true,    // quem pergunta pode adicionar?
   signedIn: true,
-  groups: [ { id, name, iconUrl, memberCount, member: false } ]
+  defaultPermissions: 6160, // as permissões padrão do bot (bitfield)
+  groups: [ { id, name, iconUrl, memberCount, member: false, grantablePermissions: 67108863 } ]
 }
 ```
 
-<span class="http post">POST</span> `/groups/:id/bots` com `{ "botId": "..." }` — adiciona o bot. Exige o **token de sessão de uma pessoa** com **Gerenciar grupo** no grupo; um token de bot é recusado (um bot não adiciona outro).
+`grantablePermissions` é o que **quem pergunta** consegue dar ao bot naquele grupo (bitfield).
+
+<span class="http post">POST</span> `/groups/:id/bots` com `{ "botId": "...", "permissions": 6160 }` — adiciona o bot. `permissions` é opcional (sem ele, valem as padrão do bot). Exige o **token de sessão de uma pessoa** com **Gerenciar grupo** no grupo; um token de bot é recusado (um bot não adiciona outro).
 
 | Status | Significado |
 |---|---|
+| `400` | `permissions` não é um bitfield válido. |
 | `403` | Sem a permissão "Gerenciar grupo", bot privado (e você não é o dono), bot banido do grupo ou do GoLive, grupo cheio, ou o bot já está em 100 grupos. |
 | `404` | Grupo não existe (ou você não é membro), ou bot não existe. |
 | `423` | O grupo foi suspenso pela administração do GoLive. |
@@ -90,11 +97,47 @@ Transformar uma sala ao vivo em grupo também não leva o bot junto: ele fica de
 
 `GET /invites/:code` continua funcionando — ele só mostra para onde um convite leva.
 
-## 3. Dê um cargo ao bot
+## 3. Permissões ao entrar
 
-Ao entrar, o bot tem só as permissões do **@everyone** — em geral, ver as salas, escrever e reagir. Para moderar (apagar mensagens dos outros, expulsar, banir, distribuir cargos) ele precisa de um **cargo** com essas permissões.
+Ao entrar, o bot ganha um **cargo próprio**, com o nome dele, que guarda as permissões autorizadas — como o cargo de integração do Discord. Ele soma ao **@everyone**, como qualquer cargo.
 
-Nas configurações do grupo, na aba de cargos: crie um cargo (ex.: "Bot") com as permissões necessárias e dê ao bot. Lembre que o bot só consegue agir sobre quem tem cargo **abaixo** do dele — por isso deixe o cargo do bot alto na lista. Mais em [Permissões e cargos](./permissoes).
+- As permissões são as do `?permissions=` do link ou, sem ele, as **padrão** do portal.
+- Quem adiciona só consegue dar permissões **que tem** (administradores e o dono podem todas). As outras chegam desligadas.
+- O cargo entra logo **abaixo do cargo mais alto de quem adicionou** (no topo, se foi o dono).
+- Depois, qualquer pessoa com **Gerenciar cargos** pode mudar o nome, as permissões e a posição desse cargo, como de qualquer outro.
+- Mas ele **não pode ser dado a outra pessoa**, **nem tirado do bot**, **nem apagado** à mão (`403`). Ele some sozinho quando o bot sai do grupo.
+
+No `GET /groups/:id`, esse cargo vem com `managedBy` = id do bot (os outros cargos vêm com `managedBy: null`).
+
+O bot só consegue agir sobre quem tem cargo **abaixo** do dele — se precisar, suba o cargo dele na lista. Mais em [Permissões e cargos](./permissoes).
+
+### O bitfield
+
+Cada permissão é um bit, na ordem abaixo. Some os valores das que o bot precisa:
+
+| Bit | Valor | Permissão | | Bit | Valor | Permissão |
+|---|---|---|---|---|---|---|
+| 0 | 1 | `administrator` | | 13 | 8192 | `sendImages` |
+| 1 | 2 | `manageGroup` | | 14 | 16384 | `mentionMembers` |
+| 2 | 4 | `manageChannels` | | 15 | 32768 | `mentionEveryone` |
+| 3 | 8 | `manageRoles` | | 16 | 65536 | `addReactions` |
+| 4 | 16 | `kickMembers` | | 17 | 131072 | `react` |
+| 5 | 32 | `banMembers` | | 18 | 262144 | `connect` |
+| 6 | 64 | `manageMessages` | | 19 | 524288 | `mic` |
+| 7 | 128 | `manageReactions` | | 20 | 1048576 | `screen` |
+| 8 | 256 | `createInvites` | | 21 | 2097152 | `camera` |
+| 9 | 512 | `manageWebhooks` | | 22 | 4194304 | `videoSource` |
+| 10 | 1024 | `viewChannel` | | 23 | 8388608 | `chat` |
+| 11 | 2048 | `sendMessages` | | 24 | 16777216 | `gif` |
+| 12 | 4096 | `sendGifs` | | 25 | 33554432 | `image` |
+
+```js
+const BITS = { kickMembers: 16, manageMessages: 64, sendMessages: 2048 };
+const permissions = BITS.kickMembers | BITS.manageMessages | BITS.sendMessages; // 2128
+console.log(`https://golive.nemtudo.me/bots/${account.id}/add?permissions=${permissions}`);
+```
+
+A aba **Instalação** do portal monta esse número para você.
 
 ## Descobrindo grupos e salas
 
