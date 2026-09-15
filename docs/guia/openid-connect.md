@@ -15,13 +15,19 @@ O OIDC vale a pena quando você usa uma biblioteca pronta — **NextAuth/Auth.js
 Aponte a sua biblioteca para o **issuer** e ela acha o resto sozinha:
 
 ```
-https://apigolive.nemtudo.me
+https://golive.nemtudo.me
 ```
 
-Os dois documentos de descoberta são públicos:
+::: warning O issuer é o site, não a API
+`https://golive.nemtudo.me` — o mesmo domínio em que as pessoas usam o GoLive, e o mesmo que aparece no `iss` de todo `id_token`.
 
-- `GET /.well-known/openid-configuration`
-- `GET /.well-known/jwks.json` — a chave pública que verifica os `id_token`
+Não é um detalhe cosmético: o OIDC amarra o issuer ao lugar da descoberta. O documento **tem** que ser servido em `<issuer>/.well-known/openid-configuration` e devolver esse mesmo issuer, senão um cliente que segue a especificação recusa. Os *endpoints* continuam na API (`apigolive.nemtudo.me`) — um issuer identifica o provedor, não localiza ele.
+
+Se você pedir `https://apigolive.nemtudo.me/.well-known/openid-configuration`, a API te manda (308) para o endereço certo.
+:::
+
+- `GET https://golive.nemtudo.me/.well-known/openid-configuration`
+- `GET https://apigolive.nemtudo.me/.well-known/jwks.json` — a chave pública que verifica os `id_token`
 
 ### Exemplo: NextAuth / Auth.js
 
@@ -31,7 +37,7 @@ providers: [
     id: "golive",
     name: "GoLive",
     type: "oidc",
-    issuer: "https://apigolive.nemtudo.me",
+    issuer: "https://golive.nemtudo.me",
     clientId: process.env.GOLIVE_CLIENT_ID,
     clientSecret: process.env.GOLIVE_CLIENT_SECRET,
     authorization: { params: { scope: "openid identify email" } },
@@ -49,7 +55,7 @@ Bibliotecas de OIDC costumam pedir `openid profile email` por padrão. O GoLive 
 
 ```json
 {
-  "iss": "https://apigolive.nemtudo.me",
+  "iss": "https://golive.nemtudo.me",
   "sub": "0b1c8f2e-...",
   "aud": "SEU_CLIENT_ID",
   "exp": 1737600600,
@@ -86,7 +92,8 @@ const jwks = createRemoteJWKSet(
 );
 
 const { payload } = await jwtVerify(idToken, jwks, {
-  issuer: "https://apigolive.nemtudo.me",
+  // O issuer é o site; a chave mora na API. Os dois estão certos.
+  issuer: "https://golive.nemtudo.me",
   audience: process.env.GOLIVE_CLIENT_ID,
 });
 

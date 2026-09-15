@@ -23,7 +23,8 @@ https://apigolive.nemtudo.me
 | <span class="http get">GET</span> | [`/users/@me`](#get-users-me) | O perfil de quem autorizou. | `Bearer` + `identify` | 120 |
 | <span class="http get">GET</span> | [`/users/@me/groups`](#get-users-me-groups) | Os grupos dessa pessoa. | `Bearer` + `groups` | 60 |
 | <span class="http get">GET</span> | [`/users/@me/friends`](#get-users-me-friends) | As amizades aceitas dessa pessoa. | `Bearer` + `friends` | 60 |
-| <span class="http get">GET</span> | [`/.well-known/openid-configuration`](#openid-connect) | Descoberta OIDC. **Pública.** | — | 120 |
+| <span class="http get">GET</span> | [`/oauth2/openid-configuration`](#openid-connect) | O documento de descoberta OIDC. **Pública.** | — | 120 |
+| <span class="http get">GET</span> | [`/.well-known/openid-configuration`](#openid-connect) | `308` para o issuer (o site). **Pública.** | — | 120 |
 | <span class="http get">GET</span> | [`/.well-known/jwks.json`](#openid-connect) | Chave pública dos `id_token`. **Pública.** | — | 120 |
 | <span class="http get">GET</span> <span class="http post">POST</span> | [`/oauth2/userinfo`](#openid-connect) | Os claims padrão do OIDC. | `Bearer` + `openid` | 120 |
 
@@ -178,15 +179,28 @@ Trocar o secret **não** desfaz as autorizações já dadas: elas são entre a p
 
 Guia: [OpenID Connect](/guia/openid-connect). Ligado pelo escopo `openid`.
 
-### GET /.well-known/openid-configuration
+### A descoberta mora no site
 
-Documento de descoberta. **Público**, `Cache-Control: public, max-age=3600`. Responde `503` num servidor sem chave de assinatura carregada.
+O `issuer` é **`https://golive.nemtudo.me`**, e o OIDC exige que o documento seja servido em `<issuer>/.well-known/openid-configuration` e devolva esse mesmo issuer. Então:
 
-O `issuer` é o próprio endereço da API. O `authorization_endpoint` é o único que aponta para o **site**, porque a tela de consentimento precisa perguntar algo a uma pessoa.
+| URL | O que acontece |
+|---|---|
+| `https://golive.nemtudo.me/.well-known/openid-configuration` | **A descoberta.** O site busca o documento na API e serve. |
+| `https://apigolive.nemtudo.me/.well-known/openid-configuration` | `308` para a URL acima. |
+| `https://apigolive.nemtudo.me/oauth2/openid-configuration` | O documento cru, escrito pela API — a fonte única do que o site serve. |
+| `https://golive.nemtudo.me/.well-known/jwks.json` | `307` para a API, onde a chave realmente está. |
+
+Uma cópia do mesmo JSON nos dois domínios seria inválida num deles, porque o `issuer` de dentro contradiria a URL de fora. Por isso um redireciona em vez de copiar.
+
+### GET /oauth2/openid-configuration
+
+**Público**, `Cache-Control: public, max-age=3600`. Responde `503` num servidor sem chave de assinatura carregada.
+
+O `authorization_endpoint` aponta para o site, porque a tela de consentimento precisa perguntar algo a uma pessoa; o resto aponta para a API. Um issuer identifica o provedor, não localiza os endpoints dele.
 
 ```json
 {
-  "issuer": "https://apigolive.nemtudo.me",
+  "issuer": "https://golive.nemtudo.me",
   "authorization_endpoint": "https://golive.nemtudo.me/oauth2/authorize",
   "token_endpoint": "https://apigolive.nemtudo.me/oauth2/token",
   "userinfo_endpoint": "https://apigolive.nemtudo.me/oauth2/userinfo",
@@ -232,5 +246,8 @@ Escopo: `openid`. Os mesmos fatos do [`GET /users/@me`](#get-users-me), com os n
 
 | Variável | Para quê |
 |---|---|
-| `OIDC_ISSUER` | O `iss` dos tokens e a base das URLs de descoberta. **Fixe em produção**: um valor que varia com o cabeçalho `Host` quebra a verificação do cliente. |
+| `OIDC_ISSUER` | O `iss` dos tokens e o endereço da descoberta. Padrão: a primeira entrada de `WEB_ORIGINS` (o site), que é quase sempre o que se quer. |
+| `OIDC_API_BASE` | Onde a API responde, para as URLs de endpoint dentro do documento. Derivado da requisição quando não definido; `OAUTH_CALLBACK_BASE` também serve. |
 | `OIDC_PRIVATE_KEY` | A chave RSA de assinatura, em PEM PKCS#8. Sem ela, uma chave é gerada e guardada no MongoDB — e, sem MongoDB, gerada por processo, o que só serve para desenvolvimento com um worker só. |
+
+No site (Next.js), a descoberta é uma reescrita de `/.well-known/openid-configuration` para uma rota que busca o documento na API — veja `next.config.ts` e `app/api/oidc-configuration`. A API que ela consulta vem de `NEXT_PUBLIC_SIGNALING_URL`, a mesma variável que o resto do site usa.
