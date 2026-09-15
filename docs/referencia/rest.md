@@ -39,6 +39,7 @@ https://apigolive.nemtudo.me
 | <span class="http post">POST</span> | `/groups/:id/icon` | Troca o ícone (`{ image: dataURL }`). | `manageGroup` | 10 |
 | <span class="http delete">DELETE</span> | `/groups/:id/icon` | Remove o ícone. | `manageGroup` | 30 |
 | <span class="http put">PUT</span> | [`/groups/:id/notify`](#put-groups-id-notify) | Nível de notificação do bot no grupo. | membro | 60 |
+| <span class="http put">PUT</span> | [`/groups/:id/channels/:cid/mute`](#put-groups-id-channels-cid-mute) | Silencia ou reativa uma sala para o bot. | membro | 60 |
 | <span class="http put">PUT</span> | `/groups/:id/visibility` | `{ visibility: "public" \| "private" }`. | dono | 20 |
 | <span class="http put">PUT</span> | `/groups/:id/location` | Posição no mapa (`{ location: { lat, lng } \| null }`). | `manageGroup` | 30 |
 | <span class="http put">PUT</span> | `/groups/:id/custom-invite` | Link personalizado (`{ code }`). Plano Pro Max do dono. | `manageGroup` | 20 |
@@ -244,6 +245,9 @@ Aceita o @usuário (sem o @) ou o id. Pública.
       role: "member",            // "owner" | "admin" | "member"
       memberCount: 42, onlineCount: 7,
       unread: true, mentions: 1,
+      mutedChannels: ["c1"],     // só se o bot silenciou alguma sala
+      voiceActivity: "screen",   // só se alguém estiver numa sala de voz que o bot vê:
+                                 // "screen" (alguém transmitindo tela) > "camera" > "voice"
       suspended: true            // só se o grupo estiver suspenso
     }
   ]
@@ -300,6 +304,10 @@ Uma conta pode ser dona de até 10 grupos. Resposta: `{ group }`.
 ::: tip
 Não afeta o `group-message`: o bot recebe todas as mensagens das salas que vê, qualquer que seja o nível.
 :::
+
+### PUT /groups/:id/channels/:cid/mute
+
+`{ muted: boolean }` — silencia (ou reativa) uma sala para o bot. Numa sala silenciada, o bot não recebe [`group-notify`](./eventos#group-notify), nem de menções, e as não lidas/menções dela não entram nos totais do grupo em `GET /groups`. A sala continua com os próprios `unread`/`mentions` em `GET /groups/:id`, que também passa a trazer `muted: true` nela. Resposta: `{ muted }`. `404` se o bot não vê a sala.
 
 ### POST /groups/:id/leave
 
