@@ -13,7 +13,7 @@ Bot ZjNhOWMxZTItOGI0ZC00YjE3LTk5YzUtM2Q2ZTFhMGI3YzQ1.q8Xr3...
 O token em si tem duas partes separadas por ponto: o id da conta do bot (em base64url) e um segredo aleatório. Ele **não expira** — vale até você gerar um novo.
 
 ::: warning `Bot`, não `Bearer`
-`Bearer` é para sessões de pessoas. Um token de bot enviado como `Bearer ...` (ou sem prefixo nenhum) é recusado com `401`.
+`Bearer` é para sessões de pessoas — e para os access tokens de [Entrar com GoLive](./oauth2), que são outra coisa. Um token de bot enviado como `Bearer ...` (ou sem prefixo nenhum) é recusado com `401`.
 :::
 
 ## No HTTP

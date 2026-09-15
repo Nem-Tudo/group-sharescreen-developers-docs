@@ -9,6 +9,7 @@ https://apigolive.nemtudo.me
 - Erros vêm como `{ "error": "mensagem" }` — veja [Erros](./erros).
 - Cada rota tem seu limite de requisições **por IP**, na coluna "Limite" (por minuto, salvo indicação) — veja [Limites](./limites).
 - `:id` é o id do grupo, `:cid` o id da sala, `:mid` o id da mensagem, `:userId` o id de uma conta.
+- As rotas de **Entrar com GoLive** — o seu site agindo em nome de outra pessoa, com `Authorization: Bearer` — estão numa página só delas: [OAuth2](./oauth2).
 
 ## Índice de rotas
 

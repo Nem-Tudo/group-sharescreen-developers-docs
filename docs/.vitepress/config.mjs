@@ -67,6 +67,8 @@ export default defineConfig({
             { text: "Permissões e cargos", link: "/guia/permissoes" },
             { text: "Moderação", link: "/guia/moderacao" },
             { text: "Webhooks", link: "/guia/webhooks" },
+            { text: "Entrar com GoLive (OAuth2)", link: "/guia/oauth2" },
+            { text: "OpenID Connect", link: "/guia/openid-connect" },
             { text: "Organizando um bot grande", link: "/guia/estrutura" },
             { text: "Salas ao vivo (experimental)", link: "/guia/salas-ao-vivo" },
           ],
@@ -83,6 +85,7 @@ export default defineConfig({
           text: "Referência",
           items: [
             { text: "API REST", link: "/referencia/rest" },
+            { text: "OAuth2", link: "/referencia/oauth2" },
             { text: "Eventos do WebSocket", link: "/referencia/eventos" },
             { text: "Objetos", link: "/referencia/objetos" },
             { text: "Permissões", link: "/referencia/permissoes" },
