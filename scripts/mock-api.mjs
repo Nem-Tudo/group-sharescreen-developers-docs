@@ -40,7 +40,7 @@ export function createMockApi({ botToken }) {
     id: "grp1",
     name: "Grupo Teste",
     ownerId: "user-1",
-    permissions: { manage: OFF(MANAGE), general: { viewChannel: true }, text: { sendMessages: true, addReactions: true, react: true, mentionMembers: true, mentionEveryone: false, sendGifs: true, sendImages: true }, voice: {} },
+    permissions: { manage: OFF(MANAGE), general: { viewChannel: true, useCustomEmojis: true, useExternalEmojis: true }, text: { sendMessages: true, addReactions: true, react: true, mentionMembers: true, mentionEveryone: false, sendGifs: true, sendImages: true }, voice: {} },
     roles: [{ id: "mod", name: "Moderação", color: null, position: 1, hoist: true, mentionable: false, permissions: { manage: { ...OFF(MANAGE), kickMembers: true }, general: {}, text: {}, voice: {} } }],
   };
   const memberRoles = {};

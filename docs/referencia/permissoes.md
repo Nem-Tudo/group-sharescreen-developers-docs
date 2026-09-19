@@ -26,6 +26,8 @@ Valem para salas de texto e de voz; a sala pode sobrescrever.
 | Chave | Libera | Padrão @everyone |
 |---|---|---|
 | `viewChannel` | Ver a sala. Sem isso, a sala nem aparece (e o bot não recebe as mensagens dela). | ✅ |
+| `useCustomEmojis` | Usar emojis personalizados (`<:nome:id>`) em mensagens, reações e no chat da chamada — inclusive os do próprio grupo. Sem isso, o token vira `:nome:`. | ✅ |
+| `useExternalEmojis` | Usar emojis de fora do grupo: de outro grupo em que se está, ou os da própria conta. Sem isso, os do grupo ainda funcionam. | ✅ |
 
 ## Texto (`text`)
 

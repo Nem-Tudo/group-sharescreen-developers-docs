@@ -197,7 +197,7 @@ Uma sala, em `GET /groups/:id` → `channels`.
 {
   manage:  { administrator, manageGroup, manageChannels, manageRoles,
              kickMembers, banMembers, manageMessages, manageReactions, createInvites }
-  general: { viewChannel }
+  general: { viewChannel, useCustomEmojis, useExternalEmojis }
   text:    { sendMessages, sendGifs, sendImages, mentionMembers,
              mentionEveryone, addReactions, react }
   voice:   { connect, mic, screen, camera, videoSource, chat, gif, image }

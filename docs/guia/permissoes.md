@@ -59,7 +59,7 @@ Cada conjunto de permissões tem quatro seções:
 ```js
 {
   manage:  { administrator, manageGroup, manageChannels, manageRoles, kickMembers, banMembers, manageMessages, manageReactions, createInvites, manageWebhooks },
-  general: { viewChannel },
+  general: { viewChannel, useCustomEmojis, useExternalEmojis },
   text:    { sendMessages, sendGifs, sendImages, mentionMembers, mentionEveryone, addReactions, react },
   voice:   { connect, mic, screen, camera, videoSource, chat, gif, image }
 }
