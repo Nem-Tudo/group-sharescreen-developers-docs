@@ -14,6 +14,8 @@ Valem para o grupo todo; nenhuma sala sobrescreve.
 | `manageRoles` | Gerenciar cargos | Criar/editar/apagar cargos abaixo do seu, dar cargos, permissões do @everyone. | ❌ |
 | `kickMembers` | Expulsar membros | Tirar alguém do grupo. | ❌ |
 | `banMembers` | Banir membros | Banir e desbanir; ver a lista de banidos. | ❌ |
+| `muteMembers` | Silenciar membros | Desligar o microfone de outra pessoa numa sala de voz (ela não consegue religar) e liberar de novo. | ❌ |
+| `moveMembers` | Mover membros | Levar alguém de uma sala de voz do grupo para outra — mesmo uma sem "Conectar" para essa pessoa. | ❌ |
 | `manageMessages` | Gerenciar mensagens | Apagar mensagens dos outros. | ❌ |
 | `manageReactions` | Gerenciar reações | Tirar a reação dos outros de uma mensagem. | ❌ |
 | `createInvites` | Criar convites | Criar convites e revogar os seus. | ❌ |
@@ -70,5 +72,6 @@ Só para salas de voz. Bots não entram em chamadas; listadas para quem gerencia
 | Editar/apagar/reordenar um cargo | Só cargos **abaixo** do seu. |
 | Ligar uma permissão num cargo | Só permissões que você mesmo tem (administradores podem todas). |
 | Cargo de bot (`managedBy`) | Editável como os outros; nunca dado a outra pessoa, tirado do bot ou apagado. Some quando o bot sai. |
+| Cargo de Aura (`system: "aura"`) | Criado com o grupo; quem dá Aura ao grupo recebe, quem tira perde. Cor, permissões e posição editáveis; nome, quem tem e apagar não (`403`). |
 
 O valor de cada permissão no bitfield do `?permissions=` está em [Colocando o bot num grupo](/guia/entrando-em-grupos#o-bitfield).

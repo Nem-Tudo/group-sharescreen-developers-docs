@@ -132,6 +132,8 @@ Cada permissão é um bit, na ordem abaixo. Some os valores das que o bot precis
 | 12 | 4096 | `sendGifs` | | 25 | 33554432 | `image` |
 | | | | | 26 | 67108864 | `useCustomEmojis` |
 | | | | | 27 | 134217728 | `useExternalEmojis` |
+| | | | | 28 | 268435456 | `muteMembers` |
+| | | | | 29 | 536870912 | `moveMembers` |
 
 ```js
 const BITS = { kickMembers: 16, manageMessages: 64, sendMessages: 2048 };

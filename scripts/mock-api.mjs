@@ -16,7 +16,7 @@ import { WebSocketServer } from "ws";
 const STANDARD_EMOJI_RE = new RegExp("^\\p{RGI_Emoji}$", "v");
 
 const OFF = (keys) => Object.fromEntries(keys.map((k) => [k, false]));
-const MANAGE = ["administrator", "manageGroup", "manageChannels", "manageRoles", "kickMembers", "banMembers", "manageMessages", "manageReactions", "createInvites"];
+const MANAGE = ["administrator", "manageGroup", "manageChannels", "manageRoles", "kickMembers", "banMembers", "muteMembers", "moveMembers", "manageMessages", "manageReactions", "createInvites", "manageWebhooks"];
 const BOT_SELF_JOIN = "Bots cannot join groups on their own. Someone with the \"manage group\" permission has to add the bot.";
 
 export function createMockApi({ botToken }) {

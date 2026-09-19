@@ -58,7 +58,7 @@ Cada conjunto de permissões tem quatro seções:
 
 ```js
 {
-  manage:  { administrator, manageGroup, manageChannels, manageRoles, kickMembers, banMembers, manageMessages, manageReactions, createInvites, manageWebhooks },
+  manage:  { administrator, manageGroup, manageChannels, manageRoles, kickMembers, banMembers, muteMembers, moveMembers, manageMessages, manageReactions, createInvites, manageWebhooks },
   general: { viewChannel, useCustomEmojis, useExternalEmojis },
   text:    { sendMessages, sendGifs, sendImages, mentionMembers, mentionEveryone, addReactions, react },
   voice:   { connect, mic, screen, camera, videoSource, chat, gif, image }
@@ -131,6 +131,8 @@ const { role } = await api("POST", `/groups/${groupId}/roles`, {
 Mande **todos** os cargos que a pessoa deve ter, não só o novo. Leia os atuais em `memberRoles[userId]`, adicione ou remova, e envie. Cargos acima do bot ficam como estavam, independentemente do que for enviado.
 
 Um cargo com `managedBy` não entra nessa conta: mandá-lo para outra pessoa, ou tirá-lo do próprio bot, dá `403`. `DELETE` num cargo desses também dá `403`.
+
+O cargo de Aura (`system: "aura"`, `null` nos outros) também é automático: é de quem dá Aura ao grupo. Incluí-lo ou tirá-lo de alguém dá `403`, e ele não pode ser renomeado nem apagado.
 :::
 
 ## Permissões por sala

@@ -196,7 +196,7 @@ Uma sala, em `GET /groups/:id` → `channels`.
 ```ts
 {
   manage:  { administrator, manageGroup, manageChannels, manageRoles,
-             kickMembers, banMembers, manageMessages, manageReactions, createInvites }
+             kickMembers, banMembers, muteMembers, moveMembers, manageMessages, manageReactions, createInvites, manageWebhooks }
   general: { viewChannel, useCustomEmojis, useExternalEmojis }
   text:    { sendMessages, sendGifs, sendImages, mentionMembers,
              mentionEveryone, addReactions, react }
