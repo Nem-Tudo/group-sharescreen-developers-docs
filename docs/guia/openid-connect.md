@@ -132,5 +132,5 @@ Para não te deixar procurando:
 - **Fluxo implícito e híbrido** (`response_type=id_token` ou `code id_token`): não. Só `code` — os outros entregam tokens pela barra de endereço, e o `code` com [PKCE](./oauth2#pkce) cobre os mesmos casos melhor.
 - **`prompt`, `max_age`, `login_hint`, `acr_values`**: ignorados.
 - **Logout único (RP-Initiated Logout)**: não. Encerrar o acesso é [`/oauth2/token/revoke`](./oauth2#encerrando-o-acesso), ou a própria pessoa em **Aplicativos conectados**.
-- **Registro dinâmico de cliente**: não. As aplicações nascem no [portal do desenvolvedor](https://golive-developers.nemtudo.me).
+- **Registro dinâmico de cliente**: não. As aplicações nascem no [portal do desenvolvedor](https://golive.nemtudo.me/developers).
 - **`at_hash`**: não vai no `id_token`. Ele é opcional no fluxo de código, que é o único que existe aqui.

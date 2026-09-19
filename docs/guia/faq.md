@@ -52,7 +52,7 @@ Não. Bots participam das salas de texto, das DMs e, de forma [experimental](./s
 
 ## Como coloco o bot num grupo com um convite?
 
-Não dá: bot não entra em grupo sozinho, nem com convite. Quem gerencia o grupo abre o **link do bot** (aba **Instalação** do [portal do desenvolvedor](https://golive-developers.nemtudo.me)) e escolhe o grupo. Veja [Colocando o bot num grupo](./entrando-em-grupos).
+Não dá: bot não entra em grupo sozinho, nem com convite. Quem gerencia o grupo abre o **link do bot** (aba **Instalação** do [portal do desenvolvedor](https://golive.nemtudo.me/developers)) e escolhe o grupo. Veja [Colocando o bot num grupo](./entrando-em-grupos).
 
 ## O bot precisa passar pelo captcha?
 

@@ -210,7 +210,7 @@ Para pessoas, a galeria é do Pro e o resto do Pro Max. **Bots têm tudo, sem pl
 
 ### Rotas do dono do bot
 
-`/account/bots` e `/account/bots/:id` são o que o [portal do desenvolvedor](https://golive-developers.nemtudo.me) usa. Exigem o **token de sessão de uma pessoa** (`Bearer`); com um token de bot respondem `401`. Detalhes e formatos em [Criando seu bot](/guia/criando-um-bot#pela-api-avancado).
+`/account/bots` e `/account/bots/:id` são o que o [portal do desenvolvedor](https://golive.nemtudo.me/developers) usa. Exigem o **token de sessão de uma pessoa** (`Bearer`); com um token de bot respondem `401`. Detalhes e formatos em [Criando seu bot](/guia/criando-um-bot#pela-api-avancado).
 
 | Rota | Corpo | Resposta |
 |---|---|---|

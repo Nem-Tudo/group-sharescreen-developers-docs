@@ -4,7 +4,7 @@ O bot tem um perfil público como qualquer conta, em `golive.nemtudo.me/user/<us
 
 Bots têm **todos os extras de perfil sem precisar de plano**: avatar da galeria, imagem própria (inclusive GIF animado), banner, fundo em degradê e música. O que um bot **não** ganha é o resto do Pro: nada de selo PRO, qualidade de transmissão maior ou temas aplicados em salas.
 
-O jeito mais fácil de editar é pela aba **Informações gerais** do [portal do desenvolvedor](https://golive-developers.nemtudo.me), com prévia ao vivo. O próprio bot também pode se editar pela API.
+O jeito mais fácil de editar é pela aba **Informações gerais** do [portal do desenvolvedor](https://golive.nemtudo.me/developers), com prévia ao vivo. O próprio bot também pode se editar pela API.
 
 ## Editando o perfil
 

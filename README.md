@@ -2,7 +2,7 @@
 
 Documentação para quem cria bots para o GoLive — publicada em **https://developers-golive.nemtudo.me**.
 
-Os bots em si são criados e gerenciados no portal do desenvolvedor (**https://golive-developers.nemtudo.me**), que é outro repositório: `sharescreen-developers`.
+Os bots em si são criados e gerenciados no portal do desenvolvedor (**https://golive.nemtudo.me/developers**), que é outro repositório: `sharescreen-developers`.
 
 Feita com [VitePress](https://vitepress.dev). O site é estático: o build gera HTML puro em `docs/.vitepress/dist`.
 

@@ -6,7 +6,7 @@ Isso existe para que um link de convite vazado não sirva para encher um grupo d
 
 ## 1. Pegue o link do bot
 
-No [portal do desenvolvedor](https://golive.nemtudo.me/developers), abra o bot e vá na aba **Instalação**. O link tem esta cara:
+No [portal do desenvolvedor](https://golive.golive.nemtudo.me/developers), abra o bot e vá na aba **Instalação**. O link tem esta cara:
 
 ```
 https://golive.nemtudo.me/bots/<id-do-bot>/add

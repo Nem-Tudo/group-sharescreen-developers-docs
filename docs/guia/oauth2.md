@@ -14,7 +14,7 @@ O token de bot (`Authorization: Bot ...`) é o bot agindo como ele mesmo. O OAut
 
 ## 1. Crie as credenciais
 
-No [portal do desenvolvedor](https://golive-developers.nemtudo.me), abra o seu bot e vá em **OAuth2**:
+No [portal do desenvolvedor](https://golive.nemtudo.me/developers), abra o seu bot e vá em **OAuth2**:
 
 1. **Criar aplicação OAuth2**. Você recebe o `client_secret` **uma única vez** — guarde num lugar seguro, ele não aparece de novo.
 2. Cadastre pelo menos uma **URL de redirecionamento** — para onde o GoLive devolve a pessoa depois do consentimento.

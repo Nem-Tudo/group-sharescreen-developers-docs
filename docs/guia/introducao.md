@@ -6,7 +6,7 @@ Os exemplos são em **JavaScript (Node.js)**, mas a API é HTTP + WebSocket comu
 
 ## O que é um bot no GoLive?
 
-Um bot é **uma conta** do GoLive controlada pelo seu código. Ele é criado e gerenciado no [portal do desenvolvedor](https://golive-developers.nemtudo.me), e difere de uma pessoa nestes pontos:
+Um bot é **uma conta** do GoLive controlada pelo seu código. Ele é criado e gerenciado no [portal do desenvolvedor](https://golive.nemtudo.me/developers), e difere de uma pessoa nestes pontos:
 
 | | Pessoa | Bot |
 |---|---|---|
@@ -77,7 +77,7 @@ Todas as rotas da API recebem e devolvem **JSON**.
 
 ## O que você precisa
 
-- Uma **conta no GoLive** (é ela que cria e é dona dos bots, no [portal do desenvolvedor](https://golive-developers.nemtudo.me)).
+- Uma **conta no GoLive** (é ela que cria e é dona dos bots, no [portal do desenvolvedor](https://golive.nemtudo.me/developers)).
 - **Node.js 20.6 ou mais novo** — confira com `node -v`.
 - Um editor de código e um terminal.
 
