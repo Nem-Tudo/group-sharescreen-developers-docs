@@ -53,7 +53,7 @@ Qualquer hospedagem de site estático serve. Configure:
 - **Pasta publicada:** `docs/.vitepress/dist`
 - **Node:** 20 ou mais novo
 
-O site usa URLs sem `.html` (`cleanUrls`). Na maioria das hospedagens (Vercel, Netlify, Cloudflare Pages) isso funciona sozinho; num nginx próprio, use `try_files $uri $uri.html $uri/ =404;`.
+O site usa URLs sem `.html` (`cleanUrls`), e a hospedagem precisa servir `/guia/x` a partir de `guia/x.html`. Sem isso, a navegação dentro do site funciona, mas F5 ou um link externo recebem o `404.html` e a página fica vazia. Na Vercel, o `vercel.json` já liga isso (`"cleanUrls": true`). Num nginx próprio, use `try_files $uri $uri.html $uri/ =404;`.
 
 ## De onde vêm as informações
 
