@@ -14,7 +14,7 @@ Responder é juntar as duas metades: **ouvir** `group-message` no WebSocket e **
     from: "a41c...",
     fromName: "Maria",
     text: "alguém sabe que horas começa?",
-    kind: "text",                 // "text" | "image" | "gif"
+    kind: "text",                 // "text" | "image" | "gif" | "aura"
     images: ["https://..."],      // só quando tem imagens
     url: "https://...giphy...",   // só quando é GIF
     replyTo: { /* ... */ },       // só quando é uma resposta
@@ -56,7 +56,7 @@ O campo `replyTo` faz a resposta aparecer com a mensagem original citada em cima
 | `id` | Id da mensagem respondida (obrigatório). |
 | `name` | Nome de quem escreveu (obrigatório). |
 | `text` | O texto (cortado em 200 caracteres). |
-| `kind` | `"text"`, `"image"` ou `"gif"`. |
+| `kind` | `"text"`, `"image"`, `"gif"` ou `"aura"`. `"aura"` é o aviso que o próprio grupo escreve quando alguém dá aura a ele: não tem texto, `from` é quem deu, e `auraLevel` traz o nível do grupo na hora. Bots não enviam esse tipo. |
 | `images` | As imagens dela, se houver. |
 | `userId` | Id do autor. **Com ele, o autor é notificado** da resposta. |
 
