@@ -29,7 +29,7 @@ Uma conta, de pessoa ou de bot. Vem em `GET /auth/me`, `GET /users/:id` e nas ro
   bio: string | null
   avatarUrl: string | null
   bannerUrl: string | null
-  equippedNameColor: string | null   // cor do nome, "#rrggbb"
+  equippedNameColor: string | null   // cor do nome — veja "Cor do nome" abaixo
   points: number
   premium: object | null      // assinatura, se houver
   features: string[]          // o que o plano libera
@@ -38,6 +38,19 @@ Uma conta, de pessoa ou de bot. Vem em `GET /auth/me`, `GET /users/:id` e nas ro
   // ...e campos de perfil e loja que um bot raramente usa
 }
 ```
+
+### Cor do nome
+
+`equippedNameColor` e `nameColor` quase sempre são uma cor `"#rrggbb"`. A loja de pontos também vende nomes especiais, que chegam no mesmo campo:
+
+| Valor | O que é |
+| --- | --- |
+| `"#22c55e"` | cor sólida |
+| `"linear-gradient(90deg, #f97316, #ec4899)"` | nome em degradê |
+| `"glow:#06b6d4"` | cor com brilho neon |
+| `"shimmer:linear-gradient(...)"` | degradê animado |
+
+Se o seu bot só precisa de uma cor (por exemplo, para um embed), use a primeira cor `#...` que aparecer no texto.
 
 ## GroupUser
 
@@ -49,7 +62,7 @@ Uma pessoa como aparece dentro de um grupo (`author` das mensagens, lista de mem
   name: string                // nome de exibição
   username: string | null     // null para convidados
   avatarUrl: string | null
-  nameColor: string | null
+  nameColor: string | null    // veja "Cor do nome" abaixo
   flags: string[]
   bot: boolean
   guest: boolean
@@ -249,7 +262,7 @@ Quem aparece numa conversa (`fromUser` do evento `dm`, `user` em `GET /dm`).
   username: string
   displayName: string
   avatarUrl: string | null
-  nameColor: string | null
+  nameColor: string | null    // veja "Cor do nome" abaixo
   flags: string[]
   bot: boolean
 }
