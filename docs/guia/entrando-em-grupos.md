@@ -78,7 +78,7 @@ A página do site usa duas rotas, que também servem para quem quer automatizar:
 | Status | Significado |
 |---|---|
 | `400` | `permissions` não é um bitfield válido. |
-| `403` | Sem a permissão "Gerenciar grupo", bot privado (e você não é o dono), bot banido do grupo ou do GoLive, grupo cheio, ou o bot já está em 100 grupos. |
+| `403` | Sem a permissão "Gerenciar grupo", bot privado (e você não é o dono), bot banido do grupo ou do GoLive, grupo cheio, ou o bot já está em 10.000 grupos. |
 | `404` | Grupo não existe (ou você não é membro), ou bot não existe. |
 | `423` | O grupo foi suspenso pela administração do GoLive. |
 

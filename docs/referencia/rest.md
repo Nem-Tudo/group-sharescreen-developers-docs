@@ -324,7 +324,7 @@ Corpo `{ botId }`. Adiciona um bot ao grupo. Exige a **sessão de uma pessoa** c
 
 | Status | Motivo |
 |---|---|
-| `403` | Sem `manageGroup`, bot privado, bot banido do grupo ou do GoLive, grupo cheio, bot já em 100 grupos. |
+| `403` | Sem `manageGroup`, bot privado, bot banido do grupo ou do GoLive, grupo cheio, bot já em 10.000 grupos. |
 | `404` | Grupo não encontrado (ou você não é membro), ou bot não encontrado. |
 | `423` | Grupo suspenso. |
 
