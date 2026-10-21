@@ -24,7 +24,7 @@ await sendMessage("k2x9d0a1b3", "q7w3e5r9t1y2", { text: "Olá, grupo! 👋" });
 
 | Campo | Tipo | Descrição |
 |---|---|---|
-| `text` | string | O texto. Até **2000** caracteres. Quebras de linha com `\n`. |
+| `text` | string | O texto. Até **6000** caracteres. Quebras de linha com `\n`. |
 | `images` | string[] | Até **3** imagens como *data URL* (`data:image/png;base64,...`). |
 | `url` | string | Um GIF do Giphy (`https://*.giphy.com/...`). |
 | `attachments` | string[] | Até **5** arquivos (vídeo, áudio, documentos), enviados antes em `POST /uploads`. Veja [Arquivos](#arquivos-video-audio-documentos). |

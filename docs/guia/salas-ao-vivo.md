@@ -79,7 +79,7 @@ ws.send(JSON.stringify({
 }));
 ```
 
-Até **500** caracteres. Limite: **15 mensagens a cada 5 segundos**. Ao passar, chega `chat-blocked` — e passar dos limites repetidamente [bane o IP](/referencia/limites#limites-do-websocket).
+Até **6000** caracteres. Limite: **15 mensagens a cada 5 segundos**. Ao passar, chega `chat-blocked` — e passar dos limites repetidamente [bane o IP](/referencia/limites#limites-do-websocket).
 
 Outras respostas possíveis: `chat-blocked` (palavra bloqueada) e `room-permission-denied` (a sala desligou o chat ou os GIFs).
 

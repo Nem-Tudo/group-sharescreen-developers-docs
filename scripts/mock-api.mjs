@@ -87,7 +87,7 @@ export function createMockApi({ botToken }) {
     const author = groupUser(from);
     const m = {
       id: randomUUID(), groupId: group.id, channelId: channel.id, from, fromName: author.name,
-      text: String(body.text ?? "").trim().slice(0, 2000), kind: "text",
+      text: String(body.text ?? "").trim().slice(0, 6000), kind: "text",
       ...(body.replyTo ? { replyTo: body.replyTo } : {}),
       // Só bots mandam embeds; a API de verdade valida e converte (icon_url → iconUrl, image: { url } → image).
       ...(author.bot && Array.isArray(body.embeds) && body.embeds.length ? { embeds: body.embeds.slice(0, 10).map(mockEmbed) } : {}),
@@ -159,7 +159,7 @@ export function createMockApi({ botToken }) {
       if (m.from !== me) return [403, { error: "You can only edit your own messages." }];
       if (m.kind === "gif") return [400, { error: "A GIF cannot be edited." }];
       if (typeof body.text !== "string") return [400, { error: "Missing text." }];
-      const text = body.text.trim().slice(0, 2000);
+      const text = body.text.trim().slice(0, 6000);
       if (!text && !m.images?.length && !m.embeds?.length) return [400, { error: "Empty message." }];
       if (text === m.text) return { message: publicMessage(m) };
       m.text = text;
@@ -266,7 +266,7 @@ export function createMockApi({ botToken }) {
       if (m.from !== me) return [403, { error: "You can only edit your own messages." }];
       if (m.kind === "gif") return [400, { error: "A GIF cannot be edited." }];
       if (typeof body.text !== "string") return [400, { error: "Missing text." }];
-      const text = body.text.trim().slice(0, 2000);
+      const text = body.text.trim().slice(0, 6000);
       if (!text && !m.images?.length) return [400, { error: "Empty message." }];
       if (text === m.text) return { message: publicMessage(m) };
       m.text = text;

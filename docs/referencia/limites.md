@@ -57,8 +57,8 @@ Estourar os limites do WebSocket (`register`, `join` e `chat`) **6 vezes em 60 s
 
 | O quê | Limite |
 |---|---|
-| Texto de mensagem (grupo ou DM) | 2000 caracteres |
-| Texto no chat de sala ao vivo | 500 caracteres |
+| Texto de mensagem (grupo ou DM) | 6000 caracteres |
+| Texto no chat de sala ao vivo | 6000 caracteres |
 | Embeds por mensagem | 10, com até 6000 caracteres somados ([detalhes](/guia/enviando-mensagens#embeds)) |
 | Webhooks por sala | 15 |
 | Imagens por mensagem | 3 |

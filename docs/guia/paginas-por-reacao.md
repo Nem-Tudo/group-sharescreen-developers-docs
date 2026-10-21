@@ -49,7 +49,7 @@ const lines = members.map((m) => `${m.online ? "🟢" : "⚫"} ${m.name}`);
 const pages = chunkLines(lines, 10).map((page) => `👥 Membros (${members.length})\n\n${page}`);
 ```
 
-Lembre do limite de **2000 caracteres** por mensagem: 10–15 linhas por página é confortável.
+Lembre do limite de **6000 caracteres** por mensagem: 10–15 linhas por página é confortável.
 
 ## Passo 2: mostrar uma página
 

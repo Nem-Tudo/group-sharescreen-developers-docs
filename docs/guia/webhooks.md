@@ -34,7 +34,7 @@ await fetch(process.env.GOLIVE_WEBHOOK, {
 
 | Campo | Tipo | Descrição |
 |---|---|---|
-| `content` | string | O texto, com [markdown](./enviando-mensagens#formatacao). Até 2000 caracteres numa sala de texto. `text` também é aceito. |
+| `content` | string | O texto, com [markdown](./enviando-mensagens#formatacao). Até 6000 caracteres. `text` também é aceito. |
 | `username` | string | Um nome só para esta mensagem, no lugar do nome do webhook. |
 | `embeds` | objeto[] | Até 10 [embeds](./enviando-mensagens#embeds). |
 | `images` | string[] | Até 3 fotos, cada uma como [data URL](https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes/data) (`data:image/png;base64,...`). PNG, JPEG, WebP, GIF ou AVIF, até 5 MB cada e 8 MB juntas. |

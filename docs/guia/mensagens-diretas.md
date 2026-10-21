@@ -33,7 +33,7 @@ async function sendDM(userId, body) {
 await sendDM("a41c...", "Oi! Seu lembrete: a live começa em 5 minutos ⏰");
 ```
 
-O corpo aceita os mesmos campos de uma mensagem de grupo — `text` (até 2000), `images`, `url` (GIF) e `replyTo` — menos `mentions` e `nonce`. O `replyTo` de uma DM tem `id`, `name`, `text`, `kind` e `images`.
+O corpo aceita os mesmos campos de uma mensagem de grupo — `text` (até 6000), `images`, `url` (GIF) e `replyTo` — menos `mentions` e `nonce`. O `replyTo` de uma DM tem `id`, `name`, `text`, `kind` e `images`.
 
 ### Do @usuário para o id
 
