@@ -93,7 +93,7 @@ Na lista de membros (`GET /groups/:id/members`) ganha também:
   text: string                // "" quando é só imagem/GIF
   kind?: "text" | "image" | "gif"
   url?: string                // o GIF
-  images?: string[]           // URLs na CDN do GoLive
+  images?: string[]           // URLs na CDN do Go Live
   replyTo?: ReplyTo | null
   mentions?: string[]         // ids notificados, "@everyone", "@role:<id>", "@online", "@offline", "@expr:<expressão>"
   pingedMe?: boolean          // só no GET de mensagens, com @online/@offline/@expr: — se alcançou quem lê

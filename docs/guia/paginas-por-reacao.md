@@ -19,7 +19,7 @@ Esta página constrói esse paginador do zero. Ele usa tudo das páginas anterio
 
 ## Como "virar a página" sem editar
 
-A API do GoLive **não tem edição de mensagens**. Então virar a página é:
+A API do Go Live **não tem edição de mensagens**. Então virar a página é:
 
 1. enviar a página nova;
 2. apagar a mensagem da página anterior;
@@ -170,5 +170,5 @@ if (event.emoji === "⏭️") next = pages.length - 1;
 **Menu por números** — em vez de setas, reações 1️⃣ 2️⃣ 3️⃣ que levam direto a cada seção (ótimo para um `!ajuda` com categorias).
 
 ::: tip Por que não reagir de novo para voltar?
-Em outras plataformas o bot tira a reação da pessoa depois do clique, para ela poder clicar de novo. No GoLive o bot não pode tirar reações alheias — mas como cada página é uma mensagem nova com setas novas, a pessoa sempre tem uma seta "limpa" para clicar.
+Em outras plataformas o bot tira a reação da pessoa depois do clique, para ela poder clicar de novo. No Go Live o bot não pode tirar reações alheias — mas como cada página é uma mensagem nova com setas novas, a pessoa sempre tem uma seta "limpa" para clicar.
 :::

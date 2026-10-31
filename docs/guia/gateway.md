@@ -1,6 +1,6 @@
 # Conexão em tempo real
 
-A API HTTP serve para **agir**. Para **ficar sabendo** do que acontece — mensagens novas, reações, DMs — o bot mantém uma conexão WebSocket aberta com o GoLive.
+A API HTTP serve para **agir**. Para **ficar sabendo** do que acontece — mensagens novas, reações, DMs — o bot mantém uma conexão WebSocket aberta com o Go Live.
 
 ```
 wss://apigolive.nemtudo.me/ws
@@ -9,7 +9,7 @@ wss://apigolive.nemtudo.me/ws
 ## O ciclo de vida
 
 ```
- Bot                                   GoLive
+ Bot                                  Go Live
   │── abre wss://.../ws ─────────────────▶│
   │◀──────────── { type: "welcome" } ─────│
   │── { type: "register", token } ───────▶│
@@ -90,7 +90,7 @@ ws.on("message", touch);
 
 ## Reconectando
 
-Conexões caem: a internet oscila, o GoLive é atualizado, o computador dorme. Um bot de verdade reconecta sozinho, esperando um pouco mais a cada tentativa (*backoff exponencial*) e com um pouco de aleatoriedade (*jitter*), para não martelar o servidor:
+Conexões caem: a internet oscila, o Go Live é atualizado, o computador dorme. Um bot de verdade reconecta sozinho, esperando um pouco mais a cada tentativa (*backoff exponencial*) e com um pouco de aleatoriedade (*jitter*), para não martelar o servidor:
 
 ```js
 let attempt = 0;

@@ -4,8 +4,8 @@ const SITE_URL = "https://golive-docs-developers.nemtudo.me";
 
 export default defineConfig({
   lang: "pt-BR",
-  title: "GoLive Developers",
-  description: "Documentação da API de bots do GoLive: autenticação, mensagens, comandos, reações e muito mais.",
+  title: "Go Live Developers",
+  description: "Documentação da API de bots do Go Live: autenticação, mensagens, comandos, reações e muito mais.",
   cleanUrls: true,
   lastUpdated: true,
   sitemap: { hostname: SITE_URL },
@@ -15,7 +15,7 @@ export default defineConfig({
     ["link", { rel: "apple-touch-icon", href: "/icon.png" }],
     ["meta", { name: "theme-color", content: "#0a8cff" }],
     ["meta", { property: "og:type", content: "website" }],
-    ["meta", { property: "og:site_name", content: "GoLive Developers" }],
+    ["meta", { property: "og:site_name", content: "Go Live Developers" }],
     ["meta", { property: "og:image", content: `${SITE_URL}/icon.png` }],
   ],
 
@@ -26,14 +26,14 @@ export default defineConfig({
 
   themeConfig: {
     logo: "/icon.png",
-    siteTitle: "GoLive Developers",
+    siteTitle: "Go Live Developers",
 
     nav: [
       { text: "Guia", link: "/guia/introducao", activeMatch: "/guia/" },
       { text: "Referência", link: "/referencia/rest", activeMatch: "/referencia/" },
       { text: "Exemplos", link: "/exemplos/bot-completo", activeMatch: "/exemplos/" },
       { text: "Portal do desenvolvedor", link: "https://golive.nemtudo.me/developers" },
-      { text: "Abrir o GoLive", link: "https://golive.nemtudo.me" },
+      { text: "Abrir o Go Live", link: "https://golive.nemtudo.me" },
     ],
 
     sidebar: {
@@ -67,7 +67,7 @@ export default defineConfig({
             { text: "Permissões e cargos", link: "/guia/permissoes" },
             { text: "Moderação", link: "/guia/moderacao" },
             { text: "Webhooks", link: "/guia/webhooks" },
-            { text: "Entrar com GoLive (OAuth2)", link: "/guia/oauth2" },
+            { text: "Entrar com Go Live (OAuth2)", link: "/guia/oauth2" },
             { text: "OpenID Connect", link: "/guia/openid-connect" },
             { text: "Organizando um bot grande", link: "/guia/estrutura" },
             { text: "Salas ao vivo (experimental)", link: "/guia/salas-ao-vivo" },
@@ -143,8 +143,8 @@ export default defineConfig({
       linkText: "Voltar ao início",
     },
     footer: {
-      message: "Feito para quem constrói bots no GoLive.",
-      copyright: "GoLive · nemtudo.me",
+      message: "Feito para quem constrói bots no Go Live.",
+      copyright: "Go Live · nemtudo.me",
     },
   },
 });

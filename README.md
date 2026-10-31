@@ -1,6 +1,6 @@
-# GoLive Developers
+# Go Live Developers
 
-Documentação para quem cria bots para o GoLive — publicada em **https://developers-golive.nemtudo.me**.
+Documentação para quem cria bots para o Go Live — publicada em **https://developers-golive.nemtudo.me**.
 
 Os bots em si são criados e gerenciados no portal do desenvolvedor (**https://golive.nemtudo.me/developers**), que é outro repositório: `sharescreen-developers`.
 
@@ -29,7 +29,7 @@ examples/
 ├─ ping-pong/            o bot mínimo
 └─ bot-completo/         comandos, páginas por reação, enquete, moderação, DMs
 scripts/
-├─ mock-api.mjs          imitação local da API do GoLive
+├─ mock-api.mjs          imitação local da API do Go Live
 └─ check-examples.mjs    roda os bots de exemplo contra a imitação
 ```
 
@@ -43,7 +43,7 @@ npm run check:examples
 
 Sobe `scripts/mock-api.mjs` (HTTP + WebSocket, só em `127.0.0.1`), roda os dois bots de exemplo contra ela e confere comandos, respostas, menções, permissões, páginas por reação, enquete, DMs e reconexão. Nada fala com a API de verdade.
 
-Ao mudar a API do GoLive (em `sharescreen-api/server`), atualize a imitação e as páginas de referência junto.
+Ao mudar a API do Go Live (em `sharescreen-api/server`), atualize a imitação e as páginas de referência junto.
 
 ## Publicando
 

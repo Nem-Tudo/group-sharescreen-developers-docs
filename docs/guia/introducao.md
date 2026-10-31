@@ -1,12 +1,12 @@
 # Introdução
 
-Bem-vindo à documentação para desenvolvedores do **GoLive**. Aqui você aprende a criar bots — programas que entram nos grupos, leem e respondem mensagens, reagem, moderam e conversam por DM, tudo sozinhos.
+Bem-vindo à documentação para desenvolvedores do **Go Live**. Aqui você aprende a criar bots — programas que entram nos grupos, leem e respondem mensagens, reagem, moderam e conversam por DM, tudo sozinhos.
 
 Os exemplos são em **JavaScript (Node.js)**, mas a API é HTTP + WebSocket comum: qualquer linguagem que fale os dois serve.
 
-## O que é um bot no GoLive?
+## O que é um bot no Go Live?
 
-Um bot é **uma conta** do GoLive controlada pelo seu código. Ele é criado e gerenciado no [portal do desenvolvedor](https://golive.nemtudo.me/developers), e difere de uma pessoa nestes pontos:
+Um bot é **uma conta** do Go Live controlada pelo seu código. Ele é criado e gerenciado no [portal do desenvolvedor](https://golive.nemtudo.me/developers), e difere de uma pessoa nestes pontos:
 
 | | Pessoa | Bot |
 |---|---|---|
@@ -33,7 +33,7 @@ Tirando isso, o bot é tratado igual a uma pessoa: tem perfil em `golive.nemtudo
 
 ## Como funciona: duas conexões
 
-Um bot conversa com o GoLive por dois canais, cada um com seu papel:
+Um bot conversa com o Go Live por dois canais, cada um com seu papel:
 
 ```
                 ┌───────────────────────────────┐
@@ -43,7 +43,7 @@ Um bot conversa com o GoLive por dois canais, cada um com seu papel:
 
                 ┌───────────────────────────────┐
    OUVIR ◀───── │  WebSocket (tempo real)        │  "chegou mensagem", "alguém
-   (o GoLive    │  wss://apigolive.nemtudo.me/ws │  reagiu", "você recebeu DM"...
+   (o Go Live   │  wss://apigolive.nemtudo.me/ws │  reagiu", "você recebeu DM"...
     avisa)      └───────────────────────────────┘
 ```
 
@@ -77,7 +77,7 @@ Todas as rotas da API recebem e devolvem **JSON**.
 
 ## O que você precisa
 
-- Uma **conta no GoLive** (é ela que cria e é dona dos bots, no [portal do desenvolvedor](https://golive.nemtudo.me/developers)).
+- Uma **conta no Go Live** (é ela que cria e é dona dos bots, no [portal do desenvolvedor](https://golive.nemtudo.me/developers)).
 - **Node.js 20.6 ou mais novo** — confira com `node -v`.
 - Um editor de código e um terminal.
 

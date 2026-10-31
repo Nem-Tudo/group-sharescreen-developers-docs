@@ -1,6 +1,6 @@
 # Criando comandos
 
-Comandos são mensagens que começam com um **prefixo** — `!ajuda`, `!dado 20`, `!expulsar @fulano spam`. O GoLive não tem comandos de barra nem botões: o bot lê o texto e decide.
+Comandos são mensagens que começam com um **prefixo** — `!ajuda`, `!dado 20`, `!expulsar @fulano spam`. O Go Live não tem comandos de barra nem botões: o bot lê o texto e decide.
 
 Vamos do mais simples ao sistema completo que o [bot completo](/exemplos/bot-completo) usa.
 

@@ -86,7 +86,7 @@ for (const groupId of groups) {
 - **Notificação custa atenção.** Uma resposta com `replyTo.userId` notifica; em respostas automáticas e frequentes, deixe o `userId` de fora.
 - **DM só em resposta** a algo que a pessoa fez.
 - **Mensagens curtas.** Listas grandes vão em [páginas](./paginas-por-reacao).
-- O GoLive filtra algumas palavras em todo o site (`400 ... blocked word`); não tente contornar.
+- O Go Live filtra algumas palavras em todo o site (`400 ... blocked word`); não tente contornar.
 
 ## Segurança
 
@@ -94,7 +94,7 @@ for (const groupId of groups) {
 - **Cheque a permissão de quem pediu**, não só a do bot — veja [Duas perguntas diferentes](./permissoes#duas-perguntas-diferentes).
 - **Valide todo argumento.** Números podem ser `NaN` ou gigantes, textos podem ter 6000 caracteres, menções podem ser do próprio bot ou do dono.
 - **Nunca rode `eval`** com texto vindo do chat, nem monte comandos de terminal com ele.
-- **Cuidado ao repetir texto do usuário**: um `!falar @everyone ...` com a permissão do bot vira um `@everyone` que o usuário não poderia mandar. O `@everyone` só vale se estiver em `mentions` — não coloque texto do usuário lá. O mesmo para `@online`, `@offline` e `@expr:`: o GoLive nunca tira essas menções do texto, justamente para um bot que repete o que alguém digitou não virar um megafone.
+- **Cuidado ao repetir texto do usuário**: um `!falar @everyone ...` com a permissão do bot vira um `@everyone` que o usuário não poderia mandar. O `@everyone` só vale se estiver em `mentions` — não coloque texto do usuário lá. O mesmo para `@online`, `@offline` e `@expr:`: o Go Live nunca tira essas menções do texto, justamente para um bot que repete o que alguém digitou não virar um megafone.
 
 ## Resiliência
 

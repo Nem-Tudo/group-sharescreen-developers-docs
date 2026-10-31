@@ -324,7 +324,7 @@ export function createMockApi({ botToken }) {
       if (!me) return reply(401, { error: "unauthorized" });
       // Como o hook do servidor real: toda rota, antes de qualquer outra coisa.
       if (suspended && me === "bot-1") {
-        return reply(403, { error: "This bot has been suspended by GoLive's administration.", reason: "bot_suspended" });
+        return reply(403, { error: "This bot has been suspended by Go Live's administration.", reason: "bot_suspended" });
       }
       for (const [method, pattern, handler] of routes) {
         const match = req.method === method && pattern.exec(url.pathname);

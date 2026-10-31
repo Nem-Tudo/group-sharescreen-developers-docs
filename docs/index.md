@@ -2,12 +2,12 @@
 layout: home
 
 hero:
-  name: GoLive Developers
-  text: Crie bots para o GoLive
+  name: Go Live Developers
+  text: Crie bots para o Go Live
   tagline: Uma API HTTP para agir e um WebSocket para ouvir. Comandos, respostas, reações, páginas, moderação — tudo em JavaScript.
   image:
     src: /icon.png
-    alt: GoLive
+    alt: Go Live
   actions:
     - theme: brand
       text: Começar agora

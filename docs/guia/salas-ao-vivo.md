@@ -1,6 +1,6 @@
 # Salas ao vivo (experimental)
 
-As salas ao vivo são as salas de transmissão de tela do GoLive — `golive.nemtudo.me/watch/<nome>`. Um bot pode entrar numa delas e **participar do chat**: ler, responder e dar boas-vindas.
+As salas ao vivo são as salas de transmissão de tela do Go Live — `golive.nemtudo.me/watch/<nome>`. Um bot pode entrar numa delas e **participar do chat**: ler, responder e dar boas-vindas.
 
 ::: warning Experimental
 O chat das salas ao vivo foi feito para pessoas num navegador, não para bots. Funciona, mas:

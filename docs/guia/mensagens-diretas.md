@@ -1,6 +1,6 @@
 # Mensagens diretas (DM)
 
-Um bot conversa em particular com contas do GoLive — não precisa ser amigo. Mas, diferente de uma pessoa, **um bot só puxa conversa** com:
+Um bot conversa em particular com contas do Go Live — não precisa ser amigo. Mas, diferente de uma pessoa, **um bot só puxa conversa** com:
 
 - quem **divide um grupo** com o bot, ou
 - quem **já mandou uma DM** para o bot antes.

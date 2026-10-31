@@ -6,7 +6,7 @@ Todo bot pertence a uma conta de pessoa — a sua. Você cria e gerencia os seus
 
 ## Pelo portal (o jeito normal)
 
-1. Abra o [portal do desenvolvedor](https://golive.nemtudo.me/developers) e entre com a sua conta do GoLive — a mesma do site (usuário e senha, Discord ou Google). No site, o menu da conta também tem o atalho **Portal do desenvolvedor**.
+1. Abra o [portal do desenvolvedor](https://golive.nemtudo.me/developers) e entre com a sua conta do Go Live — a mesma do site (usuário e senha, Discord ou Google). No site, o menu da conta também tem o atalho **Portal do desenvolvedor**.
 2. Clique em **Novo bot** e preencha:
    - **Usuário do bot** — só letras minúsculas, números e `_`, até 16 caracteres. O `_bot` do final é colocado sozinho: digitando `musica`, o bot vira `@musica_bot`. **Não dá para mudar depois.**
    - **Nome de exibição** — como o nome aparece nas conversas (até 24 caracteres). Opcional: vazio, usa o usuário sem o `_bot`.

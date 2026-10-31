@@ -2,7 +2,7 @@
   "name": "golive-bot-completo",
   "private": true,
   "version": "1.0.0",
-  "description": "Bot de exemplo do GoLive: comandos, respostas, reações, paginação e DMs.",
+  "description": "Bot de exemplo do Go Live: comandos, respostas, reações, paginação e DMs.",
   "type": "module",
   "engines": {
     "node": ">=20.6"

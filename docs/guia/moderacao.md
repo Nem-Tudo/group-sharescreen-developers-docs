@@ -84,7 +84,7 @@ setInterval(() => {
 
 ### Palavras proibidas do grupo
 
-O GoLive já recusa algumas palavras em todo o site. Para uma lista própria do grupo:
+O Go Live já recusa algumas palavras em todo o site. Para uma lista própria do grupo:
 
 ```js
 const BLOCKED = ["palavrão1", "palavrão2"];

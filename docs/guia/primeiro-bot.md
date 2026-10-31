@@ -59,7 +59,7 @@ Depois, escreva `!ping` numa sala de texto do grupo. O bot responde citando a su
 
 **1. `GET /auth/me`** — confere o token e descobre o nome do bot. Se o token estiver errado, o programa para aqui com uma mensagem clara, em vez de falhar misteriosamente depois.
 
-**2. `new WebSocket(GATEWAY)` + `register`** — abre a conexão em tempo real e se identifica. A partir da resposta `registered`, o GoLive começa a mandar eventos.
+**2. `new WebSocket(GATEWAY)` + `register`** — abre a conexão em tempo real e se identifica. A partir da resposta `registered`, o Go Live começa a mandar eventos.
 
 **3. `group-message`** — é o evento de "chegou mensagem numa sala de texto". Ele traz:
 

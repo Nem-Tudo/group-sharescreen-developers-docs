@@ -14,12 +14,12 @@ As mensagens de `error` são em inglês e podem mudar — decida pelo **status**
 |---|---|---|
 | `400` | Bad Request | O corpo está errado: campo faltando, valor inválido, emoji que não é emoji, palavra bloqueada. Não adianta repetir igual. |
 | `401` | Unauthorized | Token ausente, inválido ou revogado — ou uma rota que exige sessão de pessoa. |
-| `403` | Forbidden | O bot não tem a permissão, ou tentou agir sobre alguém de cargo igual/acima. Com `reason: "bot_suspended"`, o bot foi suspenso pela administração do GoLive — veja abaixo. |
+| `403` | Forbidden | O bot não tem a permissão, ou tentou agir sobre alguém de cargo igual/acima. Com `reason: "bot_suspended"`, o bot foi suspenso pela administração do Go Live — veja abaixo. |
 | `404` | Not Found | Não existe **ou o bot não tem acesso**: grupo em que ele não está, sala que ele não vê, conta que bloqueou. A API não diferencia de propósito. |
 | `409` | Conflict | Conflito de estado: nome em uso, limite de bots atingido, pedido de amizade repetido. |
 | `410` | Gone | Convite expirado, revogado ou esgotado. |
 | `413` | Payload Too Large | Imagem grande demais. |
-| `423` | Locked | O grupo está suspenso pela administração do GoLive. A resposta traz `suspended: true`. |
+| `423` | Locked | O grupo está suspenso pela administração do Go Live. A resposta traz `suspended: true`. |
 | `429` | Too Many Requests | Limite de requisições. Espere o `retry-after` (segundos) e tente de novo. |
 | `500` | Internal Server Error | Falha do servidor. Tente de novo mais tarde. |
 | `502` | Bad Gateway | Falhou o envio de imagem para a CDN. Tente de novo. |
@@ -72,12 +72,12 @@ A versão completa, com repetição em falhas de rede, é o [`rest.js` do bot co
 
 ## Bot suspenso
 
-A administração do GoLive pode suspender um bot — por tempo determinado ou até segunda ordem. Enquanto isso:
+A administração do Go Live pode suspender um bot — por tempo determinado ou até segunda ordem. Enquanto isso:
 
 - **toda** requisição HTTP com o token dele responde `403` com `reason: "bot_suspended"`:
 
   ```json
-  { "error": "This bot has been suspended by GoLive's administration.", "reason": "bot_suspended" }
+  { "error": "This bot has been suspended by Go Live's administration.", "reason": "bot_suspended" }
   ```
 
 - a conexão WebSocket recebe [`banned`](./eventos#banned) e fecha com o código `4003`;
@@ -87,7 +87,7 @@ Não adianta repetir nem reconectar: pare e espere. Nada do bot é apagado — q
 
 ```js
 if (err.status === 403 && err.body?.reason === "bot_suspended") {
-  console.error("Bot suspenso pela administração do GoLive.");
+  console.error("Bot suspenso pela administração do Go Live.");
   process.exit(1);
 }
 ```
@@ -98,13 +98,13 @@ if (err.status === 403 && err.body?.reason === "bot_suspended") {
 |---|---|---|
 | 400 | `Empty message.` | Mensagem sem `text`, `images` nem `url`. |
 | 400 | `Invalid message.` | Caracteres de controle no texto. |
-| 400 | `Your message contains a blocked word.` | Palavra filtrada pelo GoLive. |
+| 400 | `Your message contains a blocked word.` | Palavra filtrada pelo Go Live. |
 | 400 | `Invalid GIF.` | `url` fora do Giphy. |
 | 400 | `Invalid emoji.` | O `emoji` não é exatamente um emoji padrão. |
 | 400 | `At most 20 different reactions per message.` | Limite de reações. |
 | 400 | `Body cannot be empty when content-type is set to 'application/json'` | `Content-Type` JSON sem corpo — mande `{}`. |
 | 401 | `unauthorized` | Token. Veja [Autenticação](/guia/autenticacao#erros-de-autenticacao). |
-| 403 | `This bot has been suspended by GoLive's administration.` | Bot suspenso (`reason: "bot_suspended"`). Toda rota responde isso até a suspensão acabar. |
+| 403 | `This bot has been suspended by Go Live's administration.` | Bot suspenso (`reason: "bot_suspended"`). Toda rota responde isso até a suspensão acabar. |
 | 403 | `You do not have permission to ...` | Falta de permissão do bot. |
 | 403 | `You cannot do this to someone with a role equal to or above your own.` | Hierarquia: suba o cargo do bot. |
 | 403 | `Nobody can remove the group's owner.` | Alvo é o dono. |
@@ -113,5 +113,5 @@ if (err.status === 403 && err.body?.reason === "bot_suspended") {
 | 404 | `Room not found.` | Sala inexistente, de voz, ou invisível para o bot. |
 | 404 | `Message not found.` | Mensagem apagada ou de outra sala. |
 | 404 | `User not found.` | Conta inexistente ou bloqueio entre as contas. |
-| 423 | `This group has been suspended by GoLive's administration...` | Grupo suspenso. |
-| 503 | `Text rooms are not available in this installation.` | Instalação sem banco de mensagens (não acontece no GoLive oficial). |
+| 423 | `This group has been suspended by Go Live's administration...` | Grupo suspenso. |
+| 503 | `Text rooms are not available in this installation.` | Instalação sem banco de mensagens (não acontece no Go Live oficial). |

@@ -12,7 +12,7 @@ bot-completo/
 │  └─ link-de-instalacao.js ← mostra o link para adicionar o bot a um grupo
 └─ src/
    ├─ index.js             ← liga tudo: cliente, comandos, eventos
-   ├─ golive/              ← falar com o GoLive (reutilizável em qualquer bot)
+   ├─ golive/              ← falar com o Go Live (reutilizável em qualquer bot)
    │  ├─ rest.js           ← HTTP: token, JSON, 429, repetição
    │  ├─ gateway.js        ← WebSocket: register, heartbeat, reconexão
    │  ├─ client.js         ← junta os dois e cria eventos amigáveis

@@ -1,6 +1,6 @@
 # OAuth2
 
-Rotas de **Entrar com GoLive** — o seu site agindo em nome de uma pessoa. O guia passo a passo está em [Entrar com GoLive](/guia/oauth2).
+Rotas de **Entrar com Go Live** — o seu site agindo em nome de uma pessoa. O guia passo a passo está em [Entrar com Go Live](/guia/oauth2).
 
 ```
 https://apigolive.nemtudo.me

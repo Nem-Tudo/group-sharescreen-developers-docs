@@ -113,7 +113,7 @@ export class Gateway extends EventEmitter {
         // Token inválido ou revogado — reconectar não resolve.
         this.emit(
           "error",
-          new Error(`O GoLive recusou o registro: ${payload.message}. Confira o token do bot.`)
+          new Error(`O Go Live recusou o registro: ${payload.message}. Confira o token do bot.`)
         );
         this.close();
       }

@@ -1,13 +1,13 @@
 # OpenID Connect
 
-O GoLive também é um provedor **OpenID Connect** — uma camada fina em cima do [Entrar com GoLive](./oauth2), não um fluxo separado.
+O Go Live também é um provedor **OpenID Connect** — uma camada fina em cima do [Entrar com Go Live](./oauth2), não um fluxo separado.
 
-Na prática, é isto: se você pedir o escopo `openid`, a resposta do `/oauth2/token` vem com um **`id_token`** — um JWT assinado que diz quem acabou de entrar. Seu servidor confere a assinatura sozinho, sem chamar a API do GoLive.
+Na prática, é isto: se você pedir o escopo `openid`, a resposta do `/oauth2/token` vem com um **`id_token`** — um JWT assinado que diz quem acabou de entrar. Seu servidor confere a assinatura sozinho, sem chamar a API do Go Live.
 
 ::: tip Precisa disso?
 Se você está escrevendo a integração na mão, **não precisa**: peça `identify` e chame `GET /users/@me`. É mais simples e funciona igual.
 
-O OIDC vale a pena quando você usa uma biblioteca pronta — **NextAuth/Auth.js, Passport, Keycloak, Authelia, Spring Security**. Aí o GoLive vira "mais um provedor", configurado com uma URL, em vez de um adaptador escrito por você.
+O OIDC vale a pena quando você usa uma biblioteca pronta — **NextAuth/Auth.js, Passport, Keycloak, Authelia, Spring Security**. Aí o Go Live vira "mais um provedor", configurado com uma URL, em vez de um adaptador escrito por você.
 :::
 
 ## Configuração automática
@@ -19,7 +19,7 @@ https://golive.nemtudo.me
 ```
 
 ::: warning O issuer é o site, não a API
-`https://golive.nemtudo.me` — o mesmo domínio em que as pessoas usam o GoLive, e o mesmo que aparece no `iss` de todo `id_token`.
+`https://golive.nemtudo.me` — o mesmo domínio em que as pessoas usam o Go Live, e o mesmo que aparece no `iss` de todo `id_token`.
 
 Não é um detalhe cosmético: o OIDC amarra o issuer ao lugar da descoberta. O documento **tem** que ser servido em `<issuer>/.well-known/openid-configuration` e devolver esse mesmo issuer, senão um cliente que segue a especificação recusa. Os *endpoints* continuam na API (`apigolive.nemtudo.me`) — um issuer identifica o provedor, não localiza ele.
 
@@ -35,7 +35,7 @@ Se você pedir `https://apigolive.nemtudo.me/.well-known/openid-configuration`, 
 providers: [
   {
     id: "golive",
-    name: "GoLive",
+    name: "Go Live",
     type: "oidc",
     issuer: "https://golive.nemtudo.me",
     clientId: process.env.GOLIVE_CLIENT_ID,
@@ -48,7 +48,7 @@ providers: [
 A URL de redirecionamento que você cadastra no portal é a que a sua biblioteca usa — no NextAuth, `https://seusite.com/api/auth/callback/golive`.
 
 ::: tip `profile` não existe aqui, e está tudo bem
-Bibliotecas de OIDC costumam pedir `openid profile email` por padrão. O GoLive **ignora** escopos que não conhece, e `identify` — que é o mesmo acesso com o nome daqui — entra sempre. Então o pedido padrão funciona sem você mudar nada.
+Bibliotecas de OIDC costumam pedir `openid profile email` por padrão. O Go Live **ignora** escopos que não conhece, e `identify` — que é o mesmo acesso com o nome daqui — entra sempre. Então o pedido padrão funciona sem você mudar nada.
 :::
 
 ## O `id_token`
@@ -114,7 +114,7 @@ const res = await fetch("https://apigolive.nemtudo.me/oauth2/userinfo", {
 });
 ```
 
-É a mesma informação do [`GET /users/@me`](/referencia/oauth2#get-users-me), com os nomes do padrão OIDC (`sub`, `preferred_username`, `picture`) em vez dos nomes do GoLive (`id`, `username`, `avatarUrl`). As duas existem de propósito: uma para bibliotecas genéricas, a outra para quem escreve contra o GoLive.
+É a mesma informação do [`GET /users/@me`](/referencia/oauth2#get-users-me), com os nomes do padrão OIDC (`sub`, `preferred_username`, `picture`) em vez dos nomes do Go Live (`id`, `username`, `avatarUrl`). As duas existem de propósito: uma para bibliotecas genéricas, a outra para quem escreve contra o Go Live.
 
 ## `nonce`
 

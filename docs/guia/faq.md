@@ -40,7 +40,7 @@ Ainda não existe edição na API. Apague e envie de novo — veja [Páginas por
 
 ## Tem comandos de barra (`/`), botões, menus ou embeds?
 
-Não. Bots do GoLive usam **comandos com prefixo** (`!ajuda`) e **reações como botões**. Mensagens são texto puro, com links, menções, imagens e GIFs.
+Não. Bots do Go Live usam **comandos com prefixo** (`!ajuda`) e **reações como botões**. Mensagens são texto puro, com links, menções, imagens e GIFs.
 
 ## Tem markdown (negrito, itálico, código)?
 

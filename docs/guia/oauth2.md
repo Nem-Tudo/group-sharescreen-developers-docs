@@ -1,6 +1,6 @@
-# Entrar com GoLive (OAuth2)
+# Entrar com Go Live (OAuth2)
 
-Deixe que as pessoas entrem no **seu** site com a conta do GoLive, do mesmo jeito que existe "entrar com o Discord" ou "entrar com o Google".
+Deixe que as pessoas entrem no **seu** site com a conta do Go Live, do mesmo jeito que existe "entrar com o Discord" ou "entrar com o Google".
 
 Quem pede o acesso é o **seu bot**: ele é o aplicativo. O id do bot é o `client_id`, e o nome, a foto e a bio dele são o que a pessoa vê na tela de consentimento. Não existe uma "aplicação" separada para manter em dia.
 
@@ -17,7 +17,7 @@ O token de bot (`Authorization: Bot ...`) é o bot agindo como ele mesmo. O OAut
 No [portal do desenvolvedor](https://golive.nemtudo.me/developers), abra o seu bot e vá em **OAuth2**:
 
 1. **Criar aplicação OAuth2**. Você recebe o `client_secret` **uma única vez** — guarde num lugar seguro, ele não aparece de novo.
-2. Cadastre pelo menos uma **URL de redirecionamento** — para onde o GoLive devolve a pessoa depois do consentimento.
+2. Cadastre pelo menos uma **URL de redirecionamento** — para onde o Go Live devolve a pessoa depois do consentimento.
 3. Use o **gerador de URL** para montar o link de login com os escopos que você precisa.
 
 ::: warning A URL de redirecionamento é comparada por igualdade exata
@@ -51,7 +51,7 @@ https://golive.nemtudo.me/oauth2/authorize
 Gere um valor aleatório, guarde na sessão do visitante e **compare** quando ele voltar. É o que impede alguém de forçar um login que não foi pedido por aquela pessoa (CSRF).
 :::
 
-Se a pessoa autorizar, o GoLive devolve ela para a sua `redirect_uri` com o código:
+Se a pessoa autorizar, o Go Live devolve ela para a sua `redirect_uri` com o código:
 
 ```
 https://seusite.com/callback?code=abc123...&state=UM_VALOR_ALEATORIO
@@ -64,7 +64,7 @@ https://seusite.com/callback?error=access_denied&error_description=...&state=...
 ```
 
 ::: warning Quando a pessoa **não** volta
-Se o `client_id` não existir, ou a `redirect_uri` não estiver cadastrada, o GoLive **não** redireciona: mostra o erro na própria tela. Devolver alguém para um endereço que ninguém cadastrou é exatamente como um código de autorização vaza.
+Se o `client_id` não existir, ou a `redirect_uri` não estiver cadastrada, o Go Live **não** redireciona: mostra o erro na própria tela. Devolver alguém para um endereço que ninguém cadastrou é exatamente como um código de autorização vaza.
 :::
 
 ## 3. Troque o código por um token
@@ -123,7 +123,7 @@ Peça só o que o seu site realmente usa. Cada escopo a mais é uma linha a mais
 | `groups` | `GET /users/@me/groups` — os grupos de que a pessoa participa. |
 | `friends` | `GET /users/@me/friends` — as amizades **já aceitas**. Pedidos pendentes nunca aparecem. |
 
-Um escopo que o GoLive não conhece é **ignorado**, não recusado: uma URL copiada de um tutorial antigo continua abrindo a tela de consentimento, só que sem aquele item.
+Um escopo que o Go Live não conhece é **ignorado**, não recusado: uma URL copiada de um tutorial antigo continua abrindo a tela de consentimento, só que sem aquele item.
 
 ## Renovando o token
 
@@ -177,7 +177,7 @@ await fetch("https://apigolive.nemtudo.me/oauth2/token/revoke", {
 });
 ```
 
-A pessoa também pode remover o acesso sozinha, em **Aplicativos conectados**, na conta dela no GoLive. Nos dois casos o access token e o refresh token param de funcionar na hora.
+A pessoa também pode remover o acesso sozinha, em **Aplicativos conectados**, na conta dela no Go Live. Nos dois casos o access token e o refresh token param de funcionar na hora.
 
 ## PKCE
 

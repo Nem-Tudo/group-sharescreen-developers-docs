@@ -1,6 +1,6 @@
 # Permissões e cargos
 
-O GoLive usa o mesmo modelo do Discord. Entender ele evita a maior parte dos `403` — e evita uma falha de segurança séria em bots de moderação.
+O Go Live usa o mesmo modelo do Discord. Entender ele evita a maior parte dos `403` — e evita uma falha de segurança séria em bots de moderação.
 
 ## Como a permissão é calculada
 

@@ -92,7 +92,7 @@ await sendMessage(groupId, channelId, {
       url: "https://example.com/video",
       description: "Um passo a passo **do zero** até o primeiro comando.",
       color: 0x5865f2,
-      author: { name: "GoLive Dev", icon_url: "https://example.com/logo.png" },
+      author: { name: "Go Live Dev", icon_url: "https://example.com/logo.png" },
       fields: [
         { name: "Duração", value: "10:32", inline: true },
         { name: "Nível", value: "Iniciante", inline: true },
@@ -120,10 +120,10 @@ await sendMessage(groupId, channelId, {
 
 Até **10** embeds por mensagem e **6000** caracteres somando o texto de todos. O que passar do limite é cortado; o que estiver fora do formato (um link `javascript:`, uma imagem `http://`) é descartado. Um embed que fica vazio some. Uma mensagem pode ser só embeds, sem `text`.
 
-A mensagem volta com `embeds` no formato do GoLive (camelCase: `iconUrl`, e `image`/`thumbnail` como a própria URL) — veja [Embed](/referencia/objetos#embed).
+A mensagem volta com `embeds` no formato do Go Live (camelCase: `iconUrl`, e `image`/`thumbnail` como a própria URL) — veja [Embed](/referencia/objetos#embed).
 
 ::: tip Imagens
-As imagens dos embeds são carregadas direto de onde apontam (não passam pela CDN do GoLive). Use um endereço `https` estável.
+As imagens dos embeds são carregadas direto de onde apontam (não passam pela CDN do Go Live). Use um endereço `https` estável.
 :::
 
 ## Menções
@@ -224,7 +224,7 @@ await sendMessage(groupId, channelId, {
 });
 ```
 
-As imagens são enviadas para a CDN do GoLive; a mensagem salva traz as URLs em `message.images`.
+As imagens são enviadas para a CDN do Go Live; a mensagem salva traz as URLs em `message.images`.
 
 ## GIFs
 
@@ -356,7 +356,7 @@ Não existe rota para uma mensagem isolada, mas se você sabe o `ts` dela, a pá
 | `400` | `That file upload has expired. Attach it again.` | O token de `attachments` passou de 7 dias, é de outra conta ou está corrompido. Envie o arquivo de novo. |
 | `400` | `At most 5 files per message.` | Divida os arquivos em mais mensagens. |
 | `400` | `Invalid message.` | O texto tem caracteres de controle (só `\n` é permitido). |
-| `400` | `Your message contains a blocked word.` | O GoLive filtra algumas palavras. Troque o texto. |
+| `400` | `Your message contains a blocked word.` | O Go Live filtra algumas palavras. Troque o texto. |
 | `400` | `Invalid GIF.` | O `url` não é do Giphy. |
 | `403` | `You do not have permission to send messages in this room.` | O bot não pode escrever nessa sala. |
 | `404` | `Room not found.` / `Group not found.` | Id errado, ou o bot não vê a sala / não está no grupo. |
